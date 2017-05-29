@@ -1,0 +1,26 @@
+{% extends 'template.html' %}
+{% block content %}
+<div class="custom-well">Alertes</div>
+<div class="custom-table" id="dtab_alert">
+	<table border="1" bordercolor="#DDD">
+		<thead>
+			<tr>
+				<th></th>
+				<th>Nature de l'alerte</th>
+				<th>Description</th>
+				<th>Lien d'accès</th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for a in alerts_list %}
+			<tr>
+				<td><span class="alert-badge" style="{{ a.prior_alert.1 }}"></span></td>
+				<td>{{ a.nat_alert }}</td>
+				<td>{{ a.descr_alert }}</td>
+				<td><a href="{{ a.lien_alert }}">{{ a.lien_alert }}</a></td>
+			</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+</div>
+{% endblock content %}

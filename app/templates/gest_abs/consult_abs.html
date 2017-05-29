@@ -1,0 +1,54 @@
+{% extends 'template.html' %}
+{% block content %}
+<div style="text-align: right;">
+	<a href="{% url 'chois_abs' %}" class="previous-icon icon-with-text">Revenir à la liste des absences</a>
+</div>
+<div class="aw-container panel">
+	<div class="panel-heading">Consulter une absence</div>
+	<div class="panel-body">
+		<div class="panel-fieldset row">Phase de pré-validation</div>
+		<div class="row">
+			<div class="col-sm-6">{{ tab_attrs_abs.id_util_connect }}</div>
+			<div class="col-sm-6">{{ tab_attrs_abs.dt_emiss_abs }}</div>
+		</div>
+		{{ tab_attrs_abs.id_util_emett }}
+		<div class="row">
+			<div class="col-sm-6">{{ tab_attrs_abs.id_type_abs }}</div>
+			<div class="col-sm-6">{{ tab_attrs_abs.num_annee }}</div>
+		</div>
+		{{ tab_attrs_abs.dt_abs }}
+		{{ tab_attrs_abs.pj_abs }}
+		{{ tab_attrs_abs.comm_abs }}
+		<div class="panel-fieldset row">Phase de post-validation</div>
+		<div class="row">
+			<div class="col-sm-6">{{ tab_attrs_abs.id_util_verif }}</div>
+			<div class="col-sm-6">{{ tab_attrs_abs.dt_verif_abs }}</div>
+		</div>
+		{{ tab_attrs_abs.est_autor }}
+		{% if can_update_type_abs_final == True %}
+		<div class="row">
+			<div class="col-sm-6">{{ tab_attrs_abs.id_type_abs_final }}</div>
+			<div class="col-sm-6 iwt-vertical-align-sm">
+				<span class="icon-with-text modify-icon" data-target="#fm_modif_type_abs_final" data-toggle="modal">Modifier le type final de l'absence</span>
+			</div>
+		</div>
+		{% else %}
+		{{ tab_attrs_abs.id_type_abs_final }}
+		{% endif %}
+		{{ tab_attrs_abs.comm_verif_abs }}
+	</div>
+	{% if tab_act|length > 0 %}
+	<div class="panel-footer">
+		{% if tab_act|length == 1 %}
+		{{ tab_act.0 | safe }}
+		{% elif tab_act|length == 2 %}
+		<div class="row">
+			{% for elem in tab_act %}
+			<div class="col-sm-6">{{ elem | safe }}</div>
+			{% endfor %}
+		</div>
+		{% endif %}
+	</div>
+	{% endif %}
+</div>
+{% endblock content %}

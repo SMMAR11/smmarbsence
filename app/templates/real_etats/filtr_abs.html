@@ -1,0 +1,12 @@
+{% extends 'template.html' %}
+{% block content %}
+<div class="custom-well">{{ title }}</div>
+<div style="text-align: right;">
+	<span class="filter-icon icon-with-text" data-target="#fm_filtr_abs" data-toggle="modal">
+		Filtrer les absences par
+	</span>
+</div>
+{{ dtab_filtr_abs | safe }}
+<div class="br"></div>
+<a href="?action=exporter-csv&group-by={{ gby }}" class="excel-icon icon-with-text">Exporter au format CSV</a>
+{% endblock content %}

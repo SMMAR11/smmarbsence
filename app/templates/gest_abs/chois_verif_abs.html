@@ -1,0 +1,9 @@
+{% extends 'template.html' %}
+{% block content %}
+<div class="custom-well">Choisir une absence en attente</div>
+<form action="" method="post" name="form_filtr_verif_abs" onsubmit="trait_post(event);">
+	{% csrf_token %}
+	{{ form_filtr_verif_abs.zl_util }}
+</form>
+{{ dtab_filtr_verif_abs | safe }}
+{% endblock content %}

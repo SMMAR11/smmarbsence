@@ -1,0 +1,41 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>{{ app_name }} - {{ title }}</title>
+		<!-- Inclusion de la bibliothèque jQuery -->
+		<script type="text/javascript" src="{% static './js/jquery.js' %}"></script>
+		<!-- Inclusion du framework Bootstrap -->
+		<link rel="stylesheet" type="text/css" href="{% static './vendors/bootstrap-3.3.7/css/bootstrap.css' %}">
+		<script type="text/javascript" src="{% static './vendors/bootstrap-3.3.7/js/bootstrap.js' %}"></script>
+		<!-- Inclusion de la bibliothèque Font Awesome -->
+		<link rel="stylesheet" type="text/css" href="{% static './vendors/font-awesome-4.7.0/css/font-awesome.min.css' %}">
+		<!-- Inclusion de mes feuilles de style personnalisées -->
+		<link rel="stylesheet" type="text/css" href="{% static './css/handlers.css' %}">
+		<link rel="stylesheet" type="text/css" href="{% static './css/styles.css' %}">
+	</head>
+	<body>
+		<div class="container-fluid">
+			<div class="row text-center">
+				<div class="col-md-8 row-col">
+					<img src="{% static './images/logos/smmarbsence.png' %}" style="height: 90px;"/>
+				</div>
+				<div class="col-md-4 row-col">
+					<div class="row-col-wrapper">
+						<span class="b">{{ title }}</span>
+						<br/>
+						{{ message }}
+						<div class="br"></div>
+						<a class="custom-btn green-btn" href="{% url 'index' %}">
+							<span class="fa fa-home fa-lg"></span>
+							Page d'accueil
+						</a>
+					</div>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>

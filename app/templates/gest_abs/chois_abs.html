@@ -1,0 +1,12 @@
+{% extends 'template.html' %}
+{% block content %}
+<div class="custom-well">Choisir une absence</div>
+<form action="" method="post" name="form_filtr_abs" onsubmit="trait_post(event);">
+	{% csrf_token %}
+	<div class="row">
+		<div class="col-xs-6">{{ form_filtr_abs.zl_util }}</div>
+		<div class="col-xs-6">{{ form_filtr_abs.zl_annee }}</div>
+	</div>
+</form>
+{{ dtab_filtr_abs | safe }}
+{% endblock content %}

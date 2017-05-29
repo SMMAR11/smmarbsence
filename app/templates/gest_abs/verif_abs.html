@@ -1,0 +1,39 @@
+{% extends 'template.html' %}
+{% block content %}
+<div style="text-align: right;">
+	<a href="{% url 'chois_verif_abs' %}" class="previous-icon icon-with-text">Revenir à la liste des absences en attente</a>
+</div>
+<div class="custom-well">Vérifier une absence</div>
+<ul class="custom-nav-tabs nav nav-justified nav-tabs">
+	<li class="active"><a href="#ongl_modal_abs" data-toggle="tab">Modalités de l'absence</a></li>
+	<li><a href="#ongl_aide_verif" data-toggle="tab">Aide à la vérification</a></li>
+	<li><a href="#ongl_rep" data-toggle="tab">Ma réponse</a></li>
+</ul>
+<div class="tab-content">
+	<div id="ongl_modal_abs" class="active fade in tab-pane">
+		{{ tab_attrs_abs.id_util_emett }}
+		<div class="row">
+			<div class="col-sm-6">{{ tab_attrs_abs.id_type_abs }}</div>
+			<div class="col-sm-6">{{ tab_attrs_abs.num_annee }}</div>
+		</div>
+		{{ tab_attrs_abs.dt_abs }}
+		{{ tab_attrs_abs.pj_abs }}
+		{{ tab_attrs_abs.comm_abs }}
+	</div>
+	<div id="ongl_aide_verif" class="fade tab-pane">
+		{{ tab_attrs_aide.descr_nds_type_abs }}
+		{{ tab_attrs_aide.nbre_j_abs_mois }}
+		{{ tab_attrs_aide.nbre_j_abs_annee }}
+		{{ tab_attrs_aide.solde_cet_restant_util }}
+		{{ tab_attrs_aide.conflit_abs }}
+	</div>
+	<div id="ongl_rep" class="fade tab-pane">
+		<form action="" method="post" name="form_verif_abs" onsubmit="trait_post(event);">
+			{% csrf_token %}
+			{{ form_verif_abs.est_autor }}
+			{{ form_verif_abs.comm_verif_abs }}
+			<button class="center-block custom-btn green-btn" type="submit">Valider</button>
+		</form>
+	</div>
+</div>
+{% endblock content %}

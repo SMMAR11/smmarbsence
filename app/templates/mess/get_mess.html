@@ -1,0 +1,37 @@
+{% extends 'template.html' %}
+{% block content %}
+<ul class="custom-nav-tabs nav nav-justified nav-tabs">
+	<li class="active">
+		<a href="#ongl_bdr" data-toggle="tab">
+			Boîte de réception
+			<span class="nt-badge">{{ qs_mess_util_bdr__count }}</span>
+		</a>
+	</li>
+	<li>
+		<a href="#ongl_mess_arch" data-toggle="tab">
+			Messages archivés
+			<span class="nt-badge">{{ qs_mess_util_arch__count }}</span>
+		</a>
+	</li>
+</ul>
+<div class="tab-content">
+	<div id="ongl_bdr" class="active fade in tab-pane">
+		<form action="" method="post" name="form_select_mess_bdr">
+			{% csrf_token %}
+			{{ form_select_mess_bdr.zcc_mess_util }}
+			<span id="btn_arch" class="archive-icon icon-with-text">Archiver les messages sélectionnés</span>
+			<br/>
+			<span id="btn_suppr_mess_bdr" class="delete-icon icon-with-text">Supprimer les messages sélectionnés</span>
+		</form>
+	</div>
+	<div id="ongl_mess_arch" class="fade tab-pane">
+		<form action="" method="post" name="form_select_mess_arch">
+			{% csrf_token %}
+			{{ form_select_mess_arch.zcc_mess_util }}
+			<span id="btn_depl_vers_bdr" class="icon-with-text inbox-icon">Déplacer les messages sélectionnés vers la boîte de réception</span>
+			<br/>
+			<span id="btn_suppr_mess_arch" class="delete-icon icon-with-text">Supprimer les messages sélectionnés</span>
+		</form>
+	</div>
+</div>
+{% endblock content %}

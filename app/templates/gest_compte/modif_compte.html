@@ -1,0 +1,27 @@
+{% extends 'template.html' %}
+{% block content %}
+<div style="text-align: right;">
+	<a href="{% url 'consult_compte' %}" class="previous-icon icon-with-text">Revenir au compte</a>
+</div>
+<div class="custom-form panel">
+	<div class="panel-heading">Modifier mon compte</div>
+	<div class="panel-body">
+		<form action="" method="post" name="form_modif_compte" onsubmit="trait_post(event);">
+			{% csrf_token %}
+			<div class="panel-fieldset row">Données personnelles</div>
+			<div class="row">
+				<div class="col-sm-6">{{ form_modif_compte.last_name }}</div>
+				<div class="col-sm-6">{{ form_modif_compte.first_name }}</div>
+			</div>
+			<div class="row">
+				<div class="col-sm-6">{{ form_modif_compte.email }}</div>
+				<div class="col-sm-6">{{ form_modif_compte.courr_second_util }}</div>
+			</div>
+			<div class="panel-fieldset row">Options du compte</div>
+			{{ form_modif_compte.email_auto_courr_princ }}
+			{{ form_modif_compte.email_auto_courr_second }}
+			<button class="center-block custom-btn green-btn" type="submit">Valider</button>
+		</form>
+	</div>
+</div>
+{% endblock content %}

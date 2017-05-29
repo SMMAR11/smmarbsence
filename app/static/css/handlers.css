@@ -1,0 +1,31 @@
+html {
+	height: 100%;
+}
+
+body {
+	font-family: 'Calibri';
+	font-size: 16px;
+	background-color: #D7E2EF;
+	color: #555;
+	text-align: justify;
+	line-height: 1.3;
+	min-height: 100%;
+}
+
+.row-col {
+	min-height: 100%;
+	line-height: 100vh;
+}
+
+@media (max-width: 991px) {
+	.row-col {
+		min-height: 100%;
+		line-height: 50vh;
+	}
+}
+
+.row-col-wrapper {
+	display: inline-block;
+	line-height: 1.3;
+	vertical-align: middle;
+}

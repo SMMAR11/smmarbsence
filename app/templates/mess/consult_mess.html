@@ -1,0 +1,29 @@
+{% extends 'template.html' %}
+{% block content %}
+<div style="text-align: right;">
+	<a href="{% url 'get_mess' %}" class="previous-icon icon-with-text">Revenir à la messagerie</a>
+</div>
+<div class="aw-container panel">
+	<div class="panel-heading">Consulter un message</div>
+	<div class="panel-body pb-padding">
+		{{ tab_attrs_mess.exped_mess }}
+		{{ tab_attrs_mess.dt_mess }}
+		{{ tab_attrs_mess.obj_mess }}
+		{{ tab_attrs_mess.corps_mess }}	
+	</div>
+	<div class="panel-footer">
+		<div class="row">
+			<div class="col-sm-6">
+				{% if mu.est_arch == False %}
+				<a href="?action=archiver" class="archive-icon icon-with-text iwt-c-white">Archiver</a>
+				{% else %}
+				<a href="?action=deplacer" class="icon-with-text inbox-icon iwt-c-white">Déplacer vers la boîte de réception</a>
+				{% endif %}
+			</div>
+			<div class="col-sm-6">
+				<span action="?action=supprimer-message-etape-1" class="delete-icon icon-with-text iwt-c-white" onclick="trait_get(event, 'suppr_mess_util');">Supprimer</span>
+			</div>
+		</div>
+	</div>
+</div>
+{% endblock content %}

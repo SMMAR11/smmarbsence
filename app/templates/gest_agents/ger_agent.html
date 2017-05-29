@@ -1,0 +1,50 @@
+{% extends 'template.html' %}
+{% block content %}
+{% if a %}
+<div style="text-align: right;">
+	<a href="{% url 'consult_agent' a.get_pk %}" class="previous-icon icon-with-text">Revenir à l'agent</a>
+</div>
+{% endif %}
+<div class="custom-form panel">
+	<div class="panel-heading">{{ title }}</div>
+	<div class="panel-body">
+		<form action="" method="post" name="form_ger_agent" onsubmit="trait_post(event);">
+			{% csrf_token %}
+			<div class="panel-fieldset row">Données personnelles</div>
+			<div class="row">
+				<div class="col-sm-6">{{ form_ger_agent.last_name }}</div>
+				<div class="col-sm-6">{{ form_ger_agent.first_name }}</div>
+			</div>
+			<div class="row">
+				<div class="col-sm-6">{{ form_ger_agent.email }}</div>
+				<div class="col-sm-6">{{ form_ger_agent.courr_second_util }}</div>
+			</div>
+			<div class="panel-fieldset row">Données générales du compte</div>
+			{% if not a %}
+			{{ form_ger_agent.username }}
+			<div class="row">
+				<div class="col-sm-6">{{ form_ger_agent.zs_password }}</div>
+				<div class="col-sm-6">{{ form_ger_agent.zs_password_bis }}</div>
+			</div>
+			{% else %}
+			<div class="row">
+				<div class="col-sm-6">{{ form_ger_agent.username }}</div>
+				<div class="col-sm-6 iwt-vertical-align-sm">
+					<span class="icon-with-text modify-icon" data-target="#fm_modif_mdp" data-toggle="modal">Modifier le mot de passe</span>
+				</div>
+			</div>
+			{% endif %}
+			<div class="panel-fieldset row">Données complémentaires du compte</div>
+			{{ form_ger_agent.solde_cet_util }}
+			{{ form_ger_agent.gpe_util }}
+			<div class="panel-fieldset row">Options du compte</div>
+			{{ form_ger_agent.en_act }}
+			{{ form_ger_agent.type_util }}
+			{{ form_ger_agent.email_auto_courr_princ }}
+			{{ form_ger_agent.email_auto_courr_second }}
+			{{ form_ger_agent.is_active }}
+			<button class="center-block custom-btn green-btn" type="submit">Valider</button>
+		</form>
+	</div>
+</div>
+{% endblock content %}

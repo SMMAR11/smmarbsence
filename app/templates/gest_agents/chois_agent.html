@@ -1,0 +1,9 @@
+{% extends 'template.html' %}
+{% block content %}
+<div class="custom-well">Choisir un agent</div>
+<form action="" method="post" name="form_filtr_agents" onsubmit="trait_post(event);">
+	{% csrf_token %}
+	{{ form_filtr_agents.zl_type_util }}
+</form>
+{{ dtab_filtr_agents | safe }}
+{% endblock content %}

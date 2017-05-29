@@ -1,0 +1,99 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>{{ app_name }} - {{ title }}{{ mess_util__count }}</title>
+		<!-- Inclusion de la bibliothèque jQuery -->
+		<script type="text/javascript" src="{% static './js/jquery.js' %}"></script>
+		<!-- Inclusion du framework Bootstrap -->
+		<link rel="stylesheet" type="text/css" href="{% static './vendors/bootstrap-3.3.7/css/bootstrap.css' %}">
+		<script type="text/javascript" src="{% static './vendors/bootstrap-3.3.7/js/bootstrap.js' %}"></script>
+		<!-- Inclusion de la bibliothèque Font Awesome -->
+		<link rel="stylesheet" type="text/css" href="{% static './vendors/font-awesome-4.7.0/css/font-awesome.min.css' %}">
+		<!-- Inclusion de la bibliothèque DataTables -->
+		<link rel="stylesheet" type="text/css" href="{% static './vendors/DataTables/css/jquery.dataTables.css' %}">
+		<script type="text/javascript" src="{% static './vendors/DataTables/js/jquery.dataTables.js' %}"></script>
+		<!-- Inclusion de la bibliothèque bootstrap-datepicker -->
+		<link rel="stylesheet" type="text/css" href="{% static './vendors/bootstrap-datepicker-1.6.4/css/bootstrap-datepicker.min.css' %}">
+		<script type="text/javascript" src="{% static './vendors/bootstrap-datepicker-1.6.4/js/bootstrap-datepicker.min.js' %}"></script>
+		<script type="text/javascript" src="{% static './vendors/bootstrap-datepicker-1.6.4/locales/bootstrap-datepicker.custom-fr.js' %}"></script>
+		<!-- Inclusion de mes feuilles de style personnalisées -->
+		<link rel="stylesheet" type="text/css" href="{% static './css/template.css' %}">
+		<link rel="stylesheet" type="text/css" href="{% static './css/styles.css' %}">
+	</head>
+	<body>
+		<div class="container-fluid">
+			<div class="row" id="header">
+				<nav class="navbar">
+					<div class="navbar-header">
+						{% if u.is_authenticated %}
+						<button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+							<span class="icon-bar"></span>
+							<span class="icon-bar"></span>
+							<span class="icon-bar"></span>
+						</button>
+						{% endif %}
+						<a class="navbar-brand" href="{% url 'index' %}" title="Revenir sur la page principale">
+							<img src="{% static './images/logos/smmarbsence.png' %}">
+						</a>
+					</div>
+					{% if u.is_authenticated %}
+					<div id="navbar" class="collapse navbar-collapse">
+						<div class="hidden-lg hidden-md">{{ top_menu }}</div>
+						<ul class="nav navbar-nav navbar-right">
+							<li><a href="{% url 'get_alert' %}"><span class="alert-badge" style="{{ badge_color }}"></span></a></li>
+							{{ last_messages }}
+							<li class="dropdown">
+								<a class="dropdown-toggle" data-toggle="dropdown" href="#">
+									<span class="fa fa-lg fa-user-o"></span>
+									{{ u.get_nom_complet }}
+									<span class="caret"></span>
+								</a>
+								<ul class="dropdown-menu">
+									<li><a href="{% url 'consult_compte' %}">Consulter mon compte</a></li>
+									{% if u.get_is_staff == True and u.get_is_superuser == True %}
+									<li><a href="/admin/">Accéder au site d'administration de {{ app_name }}</a></li>
+									{% endif %}
+									{% if 'S' in u.get_type_util__list %}
+										{% if u.get_est_super_secr == False %}
+									<li><span action="{% url 'index' %}?action=activer-mode-super-secretaire" onclick="trait_get(event, 'ger_mode_super_secr');">Activer le mode super-secrétaire</span></li>
+										{% else %}
+									<li><span action="{% url 'index' %}?action=desactiver-mode-super-secretaire" onclick="trait_get(event, 'ger_mode_super_secr');">Désactiver le mode super-secrétaire</span></li>
+										{% endif %}
+									{% endif %}
+									<li><span action="{% url 'index' %}?action=logout" onclick="trait_get(event, 'logout');">Se déconnecter</span></li>
+								</ul>
+							</li>
+						</ul>
+					</div>
+					{% endif %}
+				</nav>
+			</div>
+			<div id="content" class="form-root">
+				{% if u.is_authenticated %}
+				<div class="row">
+					<div class="col-md-3 visible-lg visible-md">{{ side_menu }}</div>
+					<div class="col-md-9">
+				{% endif %}
+				{% block content %}{% endblock %}
+				{% if u.is_authenticated %}
+					</div>
+				</div>
+				{% endif %}
+			</div>
+			<div class="row" id="footer">
+				<img src="{% static './images/logos/smmar.png' %}">
+			</div>
+			{{ modals }}
+			{% for fm in tab_fm %}
+				{{ fm }}
+			{% endfor %}
+		</div>
+		<!-- Inclusion de mes scripts personnalisés -->
+		<script type="text/javascript" src="{% static './js/functions.js' %}"></script>
+		<script type="text/javascript" src="{% static './js/scripts.js' %}"></script>
+	</body>
+</html>

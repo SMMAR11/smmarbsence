@@ -1,0 +1,146 @@
+{% extends 'template.html' %}
+{% block content %}
+<div style="text-align: right;">
+	<a href="{% url 'chois_agent' %}" class="previous-icon icon-with-text">Revenir à la liste des agents</a>
+</div>
+<div class="custom-well">Consulter un agent</div>
+<div class="row">
+	<div class="col-sm-9">
+		<ul class="custom-nav-tabs nav nav-justified nav-tabs">
+			<li class="active"><a href="#ongl_donn_opt_compte" data-toggle="tab">Données et options du compte</a></li>
+			<li><a href="#ongl_statut_agent" data-toggle="tab">
+				Statuts
+				<span class="nt-icon-wrapper">
+					{% for elem in alerts_list %}
+					{% if elem.code_alert == 'SA' and elem.util_alert == a %}
+					<span class="nt-icon warning-icon"></span>
+					{% endif %}
+					{% endfor %}
+				</span>
+			</a></li>
+			<li><a href="#ongl_decompt_agent" data-toggle="tab">Décomptes</a></li>
+			<li><a href="#ongl_cet" data-toggle="tab">
+				Compte épargne temps
+				<span class="nt-icon-wrapper">
+					{% for elem in alerts_list %}
+					{% if elem.code_alert == 'CET' and elem.util_alert == a %}
+					<span class="nt-icon warning-icon"></span>
+					{% endif %}
+					{% endfor %}
+				</span>
+			</a></li>
+		</ul>
+		<div class="tab-content">
+			<div id="ongl_donn_opt_compte" class="active fade in tab-pane">
+				<div class="custom-well cw-c-orange">Données personnelles</div>
+				<div class="row">
+					<div class="col-sm-6">{{ tab_attrs_util.last_name }}</div>
+					<div class="col-sm-6">{{ tab_attrs_util.first_name }}</div>
+				</div>
+				<div class="row">
+					<div class="col-sm-6">{{ tab_attrs_util.email }}</div>
+					<div class="col-sm-6">{{ tab_attrs_util.courr_second_util }}</div>
+				</div>
+				<div class="custom-well cw-c-orange">Données générales du compte</div>
+				{{ tab_attrs_util.username }}
+				<div class="custom-well cw-c-orange">Données complémentaires du compte</div>
+				{{ tab_attrs_util.solde_cet_util }}
+				{{ tab_attrs_util.gpe_util }}
+				<div class="custom-well cw-c-orange">Options du compte</div>
+				{{ tab_attrs_util.en_act }}
+				{{ tab_attrs_util.type_util }}
+				{{ tab_attrs_util.email_auto_courr_princ }}
+				{{ tab_attrs_util.email_auto_courr_second }}
+				{{ tab_attrs_util.is_active }}
+			</div>
+			<div id="ongl_statut_agent" class="fade tab-pane">
+				<div style="text-align: right;">
+					<span class="add-icon icon-with-text" data-target="#fm_ajout_statut_util" data-toggle="modal">Ajouter un statut agent</span>
+				</div>
+				<div class="custom-table" id="dtab_consult_statut_util">
+					<table border="1" bordercolor="#DDD">
+						<thead>
+							<tr>
+								<th>Temps de travail hebdomadaire</th>
+								<th>Mois et année de mise en place</th>
+								<th class="unbordered"></th>
+								<th class="unbordered"></th>
+							</tr>
+						</thead>
+						<tbody>
+							{% for su in tab_statut_util %}
+							<tr class="{{ su.class }}">
+								<td>{{ su.statut_util }}</td>
+								<td>{{ su.period_deb_statut_util }}</td>
+								<td class="unbordered">
+									<span action="?action=initialiser-formulaire-modification-statut-agent&id={{ su.pk }}" class="icon-without-text modify-icon pull-right" onclick="trait_get(event, 'modif_statut_util');" title="Modifier"></span>
+								</td>
+								<td class="unbordered">
+									<span action="?action=supprimer-statut-agent-etape-1&id={{ su.pk }}" class="delete-icon icon-without-text pull-right" onclick="trait_get(event, 'suppr_statut_util');" title="Supprimer"></span>
+								</td>
+							</tr>
+							{% endfor %}
+						</tbody>
+					</table>
+				</div>
+			</div>
+			<div id="ongl_decompt_agent" class="fade tab-pane">
+				<div class="custom-table" id="dtab_consult_decompt_util">
+					<table border="1" bordercolor="#DDD">
+						<thead>
+							<tr>
+								<th rowspan="2">Année</th>
+								<th colspan="4">Nombre de jours de congés payés</th>
+								<th colspan="4">Nombre de jours de RTT</th>
+							</tr>
+							<tr>
+								<th>De base</th>
+								<th>Autorisés</th>
+								<th>Restants</th>
+								<th>Transférés sur le CET</th>
+								<th>De base</th>
+								<th>Autorisés</th>
+								<th>Restants</th>
+								<th>Transférés sur le CET</th>
+							</tr>
+						</thead>
+						<tbody>
+							{% for du in tab_decompt_util %}
+							<tr>
+								<td class="b"><span action="?action=consulter-absences&annee={{ du.annee }}" class="hoverable" onclick="trait_get(event, 'consult_abs');" title="Consulter les absences autorisées ou en attente">{{ du.annee }}</span></td>
+								<td>{{ du.nbre_j_cp_base }}</td>
+								<td>{{ du.nbre_j_cp_autor }}</td>
+								<td>{{ du.nbre_j_cp_rest }}</td>
+								<td>{{ du.nbre_j_cp_transf }}</td>
+								<td>{{ du.nbre_j_rtt_base }}</td>
+								<td>{{ du.nbre_j_rtt_autor }}</td>
+								<td>{{ du.nbre_j_rtt_rest }}</td>
+								<td>{{ du.nbre_j_rtt_transf }}</td>
+							</tr>
+							{% endfor %}
+						</tbody>
+					</table>
+				</div>
+			</div>
+			<div id="ongl_cet" class="fade tab-pane">
+				<form action="?action=trier-transactions-cet-agent" method="post" name="form_tri_trans_cet_util" onsubmit="trait_post(event);">
+					{% csrf_token %}
+					<div class="row">
+						<div class="col-sm-6">{{ form_tri_trans_cet_util.zl_mode_tri }}</div>
+						<div class="col-sm-6">{{ form_tri_trans_cet_util.zl_hist_trans_cet_util }}</div>
+					</div>
+				</form>
+				<div style="text-align: right;">
+					<span class="add-icon icon-with-text" data-target="#fm_ajout_trans_cet_util" data-toggle="modal">Ajouter une transaction entrante</span>
+				</div>
+				{{ dtab_tri_trans_cet_util | safe }}
+				<div class="br"></div>
+				<a href="?action=telecharger-cet-agent" class="icon-with-text word-icon" id="btn_telech_cet_agent">Télécharger le compte épargne temps de l'agent</a>
+			</div>
+		</div>
+	</div>
+	<div class="br-sm col-sm-3">
+		<a href="{% url 'modif_agent'%}?id={{ a.get_pk }}" class="icon-with-text modify-icon">Modifier</a>
+	</div>
+</div>
+{% endblock content %}
