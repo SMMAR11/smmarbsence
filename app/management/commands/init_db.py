@@ -45,7 +45,7 @@ class Command(BaseCommand) :
 				last_name = config('MAIN_ACCOUNT_LASTNAME'),
 				username = set_username
 			)
-			obj_util.set_password(config('MAIN_ACCOUNT_PASSWORD'))
+			obj_util.set_password('password')
 			obj_util.save()
 
 			# Lien avec la table t_roles_utilisateur
