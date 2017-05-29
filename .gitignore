@@ -1,5 +1,5 @@
 .env
 *.pyc
-app/migrations/
+mail_dumps/
 media/
-app/migrations
+app/migrations/
