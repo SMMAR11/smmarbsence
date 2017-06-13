@@ -101,7 +101,7 @@ $(document).on('mousemove', function() {
 			}
 		}
 	});
-
+	
 	// Mise en place d'un calendrier sur chaque champ "date"
 	$('.date').datepicker({
 		autoclose : true,

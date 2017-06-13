@@ -152,19 +152,27 @@ Retourne un tableau
 '''
 def get_obj_dt(_code, _abrev = False) :
 
-	# Imports
+	# Import
 	from app.models import TAnnee
-	from datetime import date
-	import locale
 
 	output = None
 
 	# Obtention des mois au format français
 	if _code == 'MONTHS' and _abrev == False :
-		output = []
-		for elem in range(12) :
-			locale.setlocale(locale.LC_ALL, 'fr')
-			output.append(date(date.today().year, elem + 1, 1).strftime('%B').title())
+		output = [
+			'Janvier',
+			'Février',
+			'Mars',
+			'Avril',
+			'Mai',
+			'Juin',
+			'Juillet',
+			'Août',
+			'Septembre',
+			'Octobre',
+			'Novembre',
+			'Décembre'
+		]
 
 	# Obtention des jours de la semaine au format français
 	if _code == 'WEEKDAYS' :
@@ -400,7 +408,8 @@ def init_fm(_suff, _entete, _corps = '') :
 	from django.template.defaultfilters import safe
 
 	fm = '''
-	<div class="custom-modal fade modal" data-backdrop="static" id="fm_{suffix}" role="dialog" tabindex="-1">
+	<div class="custom-modal fade modal" data-backdrop="static" data-keyboard="false" id="fm_{suffix}" role="dialog" 
+	tabindex="-1">
 		<div class="modal-dialog">
 			<div class="modal-content">
 				<div class="modal-header">
