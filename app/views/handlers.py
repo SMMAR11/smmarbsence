@@ -20,7 +20,7 @@ def handler_404(_req) :
 	# Import
 	from app.functions import set_handler
 
-	return set_handler(_req, 403, 'La page que vous recherchez n\'existe pas ou a été déplacée.')
+	return set_handler(_req, 404, 'La page que vous recherchez n\'existe pas ou a été déplacée.')
 
 '''
 Affichage du template d'erreur 500

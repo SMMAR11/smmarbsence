@@ -320,7 +320,8 @@ def get_menu(_req) :
 		output = tab_menu_util
 
 	# Tri du tableau par ordre d'affichage et conversion en tableau associatif
-	output = dict(sorted(output.items(), key = lambda l : l[1]['mod_rank']))
+	def get_mod_rank(_val) : return _val[1]['mod_rank']
+	output = dict(sorted(output.items(), key = get_mod_rank))
 
 	return output
 
