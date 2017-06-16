@@ -198,13 +198,12 @@ def get_menu(_req) :
 	from django.conf import settings
 	from django.core.urlresolvers import reverse
 
-	output = {
+	input = {
 		'cal_abs' : {
 			'mod_href' : reverse('cal_abs'),
 			'mod_img' : settings.STATIC_URL + 'images/thumbnails/cal_abs/main.png',
 			'mod_items' : {},
 			'mod_name' : 'Calendrier des absences',
-			'mod_rank' : 4,
 			'mod_rights' : ['A', 'D', 'S']
 		},
 		'gest_abs' : {
@@ -229,7 +228,6 @@ def get_menu(_req) :
 				}
 			},
 			'mod_name' : 'Gestion des absences',
-			'mod_rank' : 3,
 			'mod_rights' : ['A', 'D', 'S']
 		},
 		'gest_agents' : {
@@ -248,7 +246,6 @@ def get_menu(_req) :
 				}
 			},
 			'mod_name' : 'Gestion des agents',
-			'mod_rank' : 2,
 			'mod_rights' : ['S']
 		},
 		'gest_compte' : {
@@ -256,7 +253,6 @@ def get_menu(_req) :
 			'mod_img' : settings.STATIC_URL + 'images/thumbnails/gest_compte/main.png',
 			'mod_items' : {},
 			'mod_name' : 'Consultation du compte',
-			'mod_rank' : 1,
 			'mod_rights' : ['A', 'D', 'S']
 		},
 		'real_etats' : {
@@ -275,10 +271,12 @@ def get_menu(_req) :
 				}
 			},
 			'mod_name' : 'Réalisation d\'états',
-			'mod_rank' : 5,
 			'mod_rights' : ['A', 'D', 'S']
 		}
 	}
+
+	# Ordre d'affichage des modules (renseignement de la clé)
+	modules__order_by = ['gest_compte', 'gest_agents', 'gest_abs', 'cal_abs', 'real_etats']
 
 	# Initialisation du menu utilisateur
 	tab_menu_util = {}
@@ -288,7 +286,7 @@ def get_menu(_req) :
 		obj_util = TUtilisateur.objects.get(pk = _req.user)
 
 		# Désignation des modules et des éléments accessibles par l'utilisateur selon ses rôles et son type de compte
-		for cle_mod, val_mod in output.items() :
+		for cle_mod, val_mod in input.items() :
 
 			# Vérification de l'accessibilité du module
 			mod_access = False
@@ -317,11 +315,12 @@ def get_menu(_req) :
 				tab_menu_util[cle_mod] = val_mod
 
 		# Surchargement de la valeur de sortie
-		output = tab_menu_util
+		input = tab_menu_util
 
-	# Tri du tableau par ordre d'affichage et conversion en tableau associatif
-	def get_mod_rank(_val) : return _val[1]['mod_rank']
-	output = dict(sorted(output.items(), key = get_mod_rank))
+	# Tri du tableau par ordre d'affichage des modules
+	output = {}
+	for elem in modules__order_by :
+		if elem in tab_menu_util.keys() : output[elem] = tab_menu_util[elem]
 
 	return output
 
