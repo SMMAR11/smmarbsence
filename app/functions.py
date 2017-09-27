@@ -195,15 +195,17 @@ def get_menu(_req) :
 
 	# Imports
 	from app.models import TUtilisateur
+	from collections import OrderedDict
 	from django.conf import settings
 	from django.core.urlresolvers import reverse
 
-	input = {
+	menu = {
 		'cal_abs' : {
 			'mod_href' : reverse('cal_abs'),
 			'mod_img' : settings.STATIC_URL + 'images/thumbnails/cal_abs/main.png',
 			'mod_items' : {},
 			'mod_name' : 'Calendrier des absences',
+			'mod_rank' : 4,
 			'mod_rights' : ['A', 'D', 'S']
 		},
 		'gest_abs' : {
@@ -213,21 +215,25 @@ def get_menu(_req) :
 				'ajout_abs' : {
 					'item_href' : reverse('ajout_abs'),
 					'item_img' : settings.STATIC_URL + 'images/thumbnails/gest_abs/add.png',
-					'item_name' : 'Ajouter une absence'
+					'item_name' : 'Ajouter une absence',
+					'item_rank' : 1
 				},
 				'chois_abs' : {
 					'item_href' : reverse('chois_abs'),
 					'item_img' : settings.STATIC_URL + 'images/thumbnails/gest_abs/consult.png',
-					'item_name' : 'Consulter une absence'
+					'item_name' : 'Consulter une absence',
+					'item_rank' : 2
 				},
 				'verif_abs' : {
 					'item_banned_for' : [['A']],
 					'item_href' : reverse('chois_verif_abs'),
 					'item_img' : settings.STATIC_URL + 'images/thumbnails/gest_abs/verify.png',
-					'item_name' : 'Vérifier une absence'
+					'item_name' : 'Vérifier une absence',
+					'item_rank' : 3
 				}
 			},
 			'mod_name' : 'Gestion des absences',
+			'mod_rank' : 3,
 			'mod_rights' : ['A', 'D', 'S']
 		},
 		'gest_agents' : {
@@ -237,15 +243,18 @@ def get_menu(_req) :
 				'ajout_agent' : {	
 					'item_href' : reverse('ajout_agent'),
 					'item_img' : settings.STATIC_URL + 'images/thumbnails/gest_agents/add.png',
-					'item_name' : 'Ajouter un agent'
+					'item_name' : 'Ajouter un agent',
+					'item_rank' : 1
 				},
 				'chois_agent' : {
 					'item_href' : reverse('chois_agent'),
 					'item_img' : settings.STATIC_URL + 'images/thumbnails/gest_agents/consult.png',
-					'item_name' : 'Consulter un agent'
+					'item_name' : 'Consulter un agent',
+					'item_rank' : 2
 				}
 			},
 			'mod_name' : 'Gestion des agents',
+			'mod_rank' : 2,
 			'mod_rights' : ['S']
 		},
 		'gest_compte' : {
@@ -253,6 +262,7 @@ def get_menu(_req) :
 			'mod_img' : settings.STATIC_URL + 'images/thumbnails/gest_compte/main.png',
 			'mod_items' : {},
 			'mod_name' : 'Consultation du compte',
+			'mod_rank' : 1,
 			'mod_rights' : ['A', 'D', 'S']
 		},
 		'real_etats' : {
@@ -262,21 +272,21 @@ def get_menu(_req) :
 				'select_abs' : {	
 					'item_href' : reverse('select_abs'),
 					'item_img' : settings.STATIC_URL + 'images/thumbnails/real_etats/main.png',
-					'item_name' : 'En sélectionnant des absences'
+					'item_name' : 'En sélectionnant des absences',
+					'item_rank' : 1
 				},
 				'regroup_abs' : {	
 					'item_href' : reverse('regroup_abs'),
 					'item_img' : settings.STATIC_URL + 'images/thumbnails/real_etats/main.png',
-					'item_name' : 'En regroupant des absences'
+					'item_name' : 'En regroupant des absences',
+					'item_rank' : 2
 				}
 			},
 			'mod_name' : 'Réalisation d\'états',
+			'mod_rank' : 5,
 			'mod_rights' : ['A', 'D', 'S']
 		}
 	}
-
-	# Ordre d'affichage des modules (renseignement de la clé)
-	modules__order_by = ['gest_compte', 'gest_agents', 'gest_abs', 'cal_abs', 'real_etats']
 
 	# Initialisation du menu utilisateur
 	tab_menu_util = {}
@@ -286,7 +296,7 @@ def get_menu(_req) :
 		obj_util = TUtilisateur.objects.get(pk = _req.user)
 
 		# Désignation des modules et des éléments accessibles par l'utilisateur selon ses rôles et son type de compte
-		for cle_mod, val_mod in input.items() :
+		for cle_mod, val_mod in menu.items() :
 
 			# Vérification de l'accessibilité du module
 			mod_access = False
@@ -310,19 +320,11 @@ def get_menu(_req) :
 					if elem_access == True : tab_elem_mod[cle_elem] = val_elem
 
 				# Mise à jour des éléments du module
-				val_mod['mod_items'] = tab_elem_mod
+				val_mod['mod_items'] = OrderedDict(sorted(tab_elem_mod.items(), key = lambda x : x[1]['item_rank']))
 
 				tab_menu_util[cle_mod] = val_mod
 
-		# Surchargement de la valeur de sortie
-		input = tab_menu_util
-
-	# Tri du tableau par ordre d'affichage des modules
-	output = {}
-	for elem in modules__order_by :
-		if elem in tab_menu_util.keys() : output[elem] = tab_menu_util[elem]
-
-	return output
+	return OrderedDict(sorted(tab_menu_util.items(), key = lambda x : x[1]['mod_rank']))
 
 def get_tz() : from django.utils import timezone; return timezone.now()
 
