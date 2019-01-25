@@ -333,7 +333,7 @@ class GererAbsence(forms.ModelForm) :
 							# Cumul du nombre de jours de RTT déjà autorisés
 							for da in qs_dt_abs :
 								obj_verif_abs = da.get_abs().get_verif_abs()
-								if obj_verif_abs :
+								if obj_verif_abs and obj_verif_abs.get_type_abs_final() :
 									if obj_verif_abs.get_type_abs_final().get_gpe_type_abs() == obj_gpe_type_abs :
 										if da.get_abs().get_etat_abs() == 1 :
 											if da.get_indisp_dt_abs() == 'WD' :
