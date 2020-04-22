@@ -168,7 +168,8 @@ DB_PK_DATAS = {
     'RTT_PK' : config('RTT_PK', cast = int)
 }
 
-RTT_QUOTAS = [2, 2, 2, 2, 2, 2, 3, 3, 2, 2, 2, 2]
+#RTT_QUOTAS = [2, 2, 2, 2, 2, 2, 3, 3, 2, 2, 2, 2]
+RTT_QUOTAS = config('RTT_QUOTAS', cast = Csv(int))
 
 SMMAR_YEAR_CREATION = 2003
 
