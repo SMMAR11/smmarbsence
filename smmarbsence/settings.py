@@ -63,7 +63,7 @@ TEMPLATES = [
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
-                'app.context_processors.get_alert',
+                #'app.context_processors.get_alert',
                 'app.context_processors.get_donn',
                 'app.context_processors.get_mess',
                 'app.context_processors.init_fm_perm',

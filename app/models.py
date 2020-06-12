@@ -1315,7 +1315,10 @@ class TAbsence(models.Model) :
 		# Import
 		from django.core.exceptions import PermissionDenied
 
-		if self.get_verif_abs() and self.get_verif_abs().get_est_autor() == True and 'S' in _u.get_type_util__list() :
+		# Instance TVerificationAbsence
+		o_verif_abs = self.get_verif_abs()
+
+		if o_verif_abs and o_verif_abs.get_est_autor() == True and 'S' in _u.get_type_util__list() :
 			peut = True
 		else :
 			peut = False
@@ -1379,7 +1382,16 @@ class TDatesAbsence(models.Model) :
 	Retourne un tableau associatif
 	'''
 	def get_donn_cal_abs(self) :
-		obj_gpe_type_abs = self.get_abs().get_verif_abs().get_type_abs_final().get_gpe_type_abs()
+
+		# Instance TVerificationAbsence
+		obj_verif_abs = self.get_abs().get_verif_abs()
+
+		# Détermination du groupe de type d'absence
+		if obj_verif_abs :
+			obj_gpe_type_abs = obj_verif_abs.get_type_abs_final().get_gpe_type_abs()
+		else :
+			obj_gpe_type_abs = self.get_abs().get_type_abs_final().get_gpe_type_abs()
+
 		return {
 			'coul_gpe_type_abs' : obj_gpe_type_abs.get_coul_gpe_type_abs(),
 			'int_dt_abs' : '{0} {1}'.format(

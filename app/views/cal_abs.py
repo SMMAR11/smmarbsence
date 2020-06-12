@@ -4,11 +4,54 @@
 from app.decorators import *
 
 '''
-Affichage du calendrier des absences ou traitement d'une requête quelconque
+Affichage du menu à vignettes relatif au module "Calendrier des absences"
 _req : Objet "requête"
 '''
 @verif_acces('cal_abs')
-def main(_req) :
+def get_menu(_req) :
+
+	# Imports
+	from app.functions import get_menu
+	from app.functions import init_menu_vign
+	from app.functions import init_vign
+	from django.shortcuts import render
+
+	output = None
+
+	if _req.method == 'GET' :
+
+		# Mise en forme du menu à vignettes du module de gestion des absences
+		menu = init_menu_vign([init_vign(
+			elem, ['item_href', 'item_img', 'item_name']
+		) for elem in get_menu(_req)['cal_abs']['mod_items'].values()], 2)
+
+		# Affichage du template
+		output = render(_req, './cal_abs/get_menu.html', { 'menu' : menu, 'title' : 'Calendrier des absences' })
+
+	return output
+
+'''
+Affichage du calendrier des absences prévisionnelles ou traitement d'une requête quelconque
+_req : Objet "requête"
+'''
+@verif_acces('cal_abs', 'cal_abs_prev')
+def cal_abs_prev(_req):
+	return cal_abs(_req=_req, _status='prev')
+
+'''
+Affichage du calendrier des absences validées ou traitement d'une requête quelconque
+_req : Objet "requête"
+'''
+@verif_acces('cal_abs')
+def cal_abs_val(_req):
+	return cal_abs(_req=_req, _status='val')
+
+'''
+Affichage du calendrier des absences ou traitement d'une requête quelconque
+_req : Objet "requête"
+_status : Statut de l'absence
+'''
+def cal_abs(_req, _status) :
 
 	# Imports
 	from app.forms.cal_abs import FiltrerCalendrierAbsences
@@ -110,8 +153,16 @@ def main(_req) :
 
 				# Initialisation du contenu de la balise <td/>
 				cont_td = ''
+
+				# Initialisation des types d'indisponibilités pour une journée
+				indisponibilities = []
+
 				for dta in TDatesAbsence.objects.filter(dt_abs = dt_jour, id_abs__id_util_emett = a) :
-					if dta.get_abs().get_etat_abs() == 1 :
+
+					# Définition des statuts de validation d'absence à prendre ne compte sur le calendrier
+					valid_statuses = [1] if _status == 'val' else [0, 1]
+
+					if dta.get_abs().get_etat_abs() in valid_statuses :
 					
 						# Définition des styles CSS pour chaque cas d'absence (matin, après-midi ou journée entière)
 						tab_css_div = {
@@ -124,11 +175,16 @@ def main(_req) :
 						set_style = tab_css_div[dta.indisp_dt_abs]
 						set_title = ''
 						if coul == True or a == obj_util :
-							set_style += ' background-color: {};'.format(dta.get_donn_cal_abs()['coul_gpe_type_abs'])
-							set_title = ' title="{}"'.format(dta.get_donn_cal_abs()['int_dt_abs'])
+							donn_cal_abs = dta.get_donn_cal_abs()
+							set_style += ' background-color: {};'.format(donn_cal_abs['coul_gpe_type_abs'])
+							set_title = ' title="{}"'.format(donn_cal_abs['int_dt_abs'])
 
 						# Mise en forme de la balise <td/>
-						cont_td += '<div class="mc-absence" style="{0}"{1}></div>'.format(set_style, set_title)
+						if dta.indisp_dt_abs not in indisponibilities :
+							cont_td += '<div class="mc-absence" style="{0}"{1}></div>'.format(set_style, set_title)
+							# Empilement des types d'indisponibilités afin de ne pas perturber le CSS du calendrier en
+							# cas de doublon d'absences en attente de validation
+							indisponibilities.append(dta.indisp_dt_abs)
 
 				tab_elem.append([cont_td, '' if est_ouvr(dt_jour) == True else 'background-color: #E9F2DC;'])
 			tab_tbody.append('<tr>{}</tr>'.format(''.join(
@@ -147,7 +203,7 @@ def main(_req) :
 		return '''
 		
 		<div class="custom-well">
-			<span class="clone-title">Calendrier des absences - {0}</span>
+			<span class="clone-title">Calendrier des absences {0} - {1}</span>
 		</div>
 		<div style="text-align: right;">
 			<span class="filter-icon icon-with-text" data-target="#fm_filtr_cal_abs" data-toggle="modal">
@@ -161,20 +217,21 @@ def main(_req) :
 						<col style="width: 160px;">
 					</colgroup>
 					<thead>
-						<tr>{1}</tr>
 						<tr>{2}</tr>
+						<tr>{3}</tr>
 					</thead>
-					<tbody>{3}</tbody>
+					<tbody>{4}</tbody>
 				</table>
 			</div>
 		</span>
 		<span action="?action=initialiser-calendrier&mois=precedent" class="icon-with-text previous-icon" 
-		onclick="trait_get(event, null);" style="{4}">Mois précédent</span>
+		onclick="trait_get(event, null);" style="{5}">Mois précédent</span>
 		<div style="float: right; display: inline;">
 			<span action="?action=initialiser-calendrier&mois=suivant" class="icon-with-text next-icon"
-			onclick="trait_get(event, null);" style="{5}">Mois suivant</span>
+			onclick="trait_get(event, null);" style="{6}">Mois suivant</span>
 		</div>
 		'''.format(
+			'validées' if _status == 'val' else 'prévisionnelles',
 			'{0} {1}'.format(get_obj_dt('MONTHS')[_mois - 1], _annee),
 			''.join(tab_thead_lg1),
 			''.join(tab_thead_lg2),
@@ -250,7 +307,7 @@ def main(_req) :
 			output = render(_req, './cal_abs/main.html', {
 				'cal' : init_cal_mois(date.today().month, date.today().year, '__all__', obj_util),
 				'tab_fm' : tab_fm,
-				'title' : 'Calendrier des absences',
+				'title' : 'Calendrier des absences ' + ('validées' if _status == 'val' else 'prévisionnelles'),
 			})
 
 	else :

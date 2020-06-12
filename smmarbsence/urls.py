@@ -67,7 +67,9 @@ urlpatterns += [
 ]
 
 urlpatterns += [
-    url(r'^{}$'.format(cal_abs_url), cal_abs.main, name = 'cal_abs')
+    url(r'^{}$'.format(cal_abs_url), cal_abs.get_menu, name = 'cal_abs'),
+    url(r'^{}calendrier-absences-previsionnelles/$'.format(cal_abs_url), cal_abs.cal_abs_prev, name = 'cal_abs_prev'),
+    url(r'^{}calendrier-absences-validees/$'.format(cal_abs_url), cal_abs.cal_abs_val, name = 'cal_abs_val')
 ]
 
 urlpatterns += [

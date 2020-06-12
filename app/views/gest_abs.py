@@ -230,23 +230,26 @@ def consult_abs(_req, _a) :
 
 		else :
 
+			# Instance TVerificationAbsence
+			o_verif_abs = obj_abs.get_verif_abs()
+
 			# Préparation des attributs disponibles en consultation
 			tab_attrs_abs = {
 				'comm_abs' : { 'label' : 'Commentaire', 'value' : obj_abs.get_comm_abs() },
 				'comm_verif_abs' : {
 					'label' : 'Commentaire',
 					'last_child' : True,
-					'value' : obj_abs.get_verif_abs().get_comm_verif_abs() if obj_abs.get_verif_abs() else None
+					'value' : o_verif_abs.get_comm_verif_abs() if o_verif_abs else None
 				},
 				'dt_abs' : { 'label' : 'Date de l\'absence', 'value' : obj_abs.get_dt_abs__fr_str() },
 				'dt_emiss_abs' : { 'label' : 'Date d\'émission de l\'absence', 'value' : obj_abs.get_dt_emiss_abs__str() },
 				'dt_verif_abs' : {
 					'label' : 'Date de vérification de l\'absence',
-					'value' : obj_abs.get_verif_abs().get_dt_verif_abs__str() if obj_abs.get_verif_abs() else None
+					'value' : o_verif_abs.get_dt_verif_abs__str() if o_verif_abs else None
 				},
 				'est_autor' : {
 					'label' : 'L\'absence est-elle autorisée ?',
-					'value' : transform_bool(obj_abs.get_verif_abs().get_est_autor()) if obj_abs.get_verif_abs() else None
+					'value' : transform_bool(o_verif_abs.get_est_autor()) if o_verif_abs else None
 				},
 				'pj_abs' : {
 					'label' : 'Consulter le justificatif d\'absence', 'value' : obj_abs.get_pj_abs__path(), 'pdf' : True
@@ -258,13 +261,13 @@ def consult_abs(_req, _a) :
 				'id_util_emett' : { 'label' : 'Agent concerné', 'value' : obj_abs.get_util_emett().get_nom_complet() },
 				'id_util_verif' : {
 					'label' : 'Agent ayant vérifié l\'absence',
-					'value' : obj_abs.get_verif_abs().get_util_verif().get_nom_complet()
-					if obj_abs.get_verif_abs() and obj_abs.get_verif_abs().get_util_verif() else None
+					'value' : o_verif_abs.get_util_verif().get_nom_complet()
+					if o_verif_abs and o_verif_abs.get_util_verif() else None
 				},
 				'id_type_abs' : { 'label' : 'Type de l\'absence', 'value' : obj_abs.get_type_abs() },
 				'id_type_abs_final' : {
 					'label' : 'Type final de l\'absence',
-					'value' : obj_abs.get_verif_abs().get_type_abs_final() if obj_abs.get_verif_abs() else None
+					'value' : o_verif_abs.get_type_abs_final() if o_verif_abs else None
 				},
 				'num_annee' : { 'label' : 'Année', 'value' : obj_abs.get_annee() }
 			}
@@ -309,7 +312,7 @@ def consult_abs(_req, _a) :
 
 				# Initialisation du formulaire
 				form_modif_type_abs_final = init_form(ModifierTypeAbsenceFinal(
-					prefix = pref_modif_type_abs_final, instance = obj_abs.get_verif_abs()
+					prefix = pref_modif_type_abs_final, instance = o_verif_abs
 				))
 
 				# Agrandissement du tableau des fenêtres modales

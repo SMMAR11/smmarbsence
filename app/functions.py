@@ -203,7 +203,21 @@ def get_menu(_req) :
 		'cal_abs' : {
 			'mod_href' : reverse('cal_abs'),
 			'mod_img' : settings.STATIC_URL + 'images/thumbnails/cal_abs/main.png',
-			'mod_items' : {},
+			'mod_items' : {
+				'cal_abs_prev' : {
+					'item_banned_for' : [['A']],
+					'item_href' : reverse('cal_abs_prev'),
+					'item_img' : settings.STATIC_URL + 'images/thumbnails/cal_abs/main.png',
+					'item_name' : 'Calendrier des absences prévisionnelles',
+					'item_rank' : 1
+				},
+				'cal_abs_val' : {
+					'item_href' : reverse('cal_abs_val'),
+					'item_img' : settings.STATIC_URL + 'images/thumbnails/cal_abs/main.png',
+					'item_name' : 'Calendrier des absences validées',
+					'item_rank' : 2
+				},
+			},
 			'mod_name' : 'Calendrier des absences',
 			'mod_rank' : 4,
 			'mod_rights' : ['A', 'D', 'S']
@@ -295,12 +309,15 @@ def get_menu(_req) :
 		# Obtention d'une instance TUtilisateur
 		obj_util = TUtilisateur.objects.get(pk = _req.user)
 
+		# Rôles utilisateur
+		type_util__list = obj_util.get_type_util__list()
+
 		# Désignation des modules et des éléments accessibles par l'utilisateur selon ses rôles et son type de compte
 		for cle_mod, val_mod in menu.items() :
 
 			# Vérification de l'accessibilité du module
 			mod_access = False
-			for tu in obj_util.get_type_util__list() :
+			for tu in type_util__list :
 				if tu in val_mod['mod_rights'] : mod_access = True
 
 			if mod_access == True :
@@ -314,7 +331,7 @@ def get_menu(_req) :
 					elem_access = True
 					if 'item_banned_for' in val_elem :
 						for elem in val_elem['item_banned_for'] :
-							if elem == obj_util.get_type_util__list() : elem_access = False
+							if elem == type_util__list : elem_access = False
 
 					# Empilement du tableau des éléments du module
 					if elem_access == True : tab_elem_mod[cle_elem] = val_elem
