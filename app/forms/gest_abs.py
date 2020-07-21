@@ -182,11 +182,13 @@ class GererAbsence(forms.ModelForm) :
 
 			# Vérification du/des champ(s) "date"
 			code_erreur_dt = None
-			if obj_statut_util :
+			if obj_statut_util:
 
 				# Stockage de l'année courante
 				annee = date.today().year
 
+				# A voir avec Coralie...
+				'''
 				if val_dt_abs :
 					if est_super_secr == False and val_dt_abs < date.today() and \
 					not date(annee, 1, 1) <= val_dt_abs <= date(annee, 1, 15) :
@@ -203,7 +205,26 @@ class GererAbsence(forms.ModelForm) :
 						else :
 							if val_dt_deb_abs < obj_statut_util.get_dt_deb_statut_util() :
 								code_erreur_dt = 'ARRIVEE_AU_SMMAR;__all__'
-			else :
+				'''
+
+				if val_dt_abs:
+					if est_super_secr == False \
+					and val_dt_abs < date.today():
+						code_erreur_dt = 'COHERENCE_TEMPORELLE;zd_dt_abs'
+					if val_dt_abs < obj_statut_util.get_dt_deb_statut_util():
+						code_erreur_dt = 'ARRIVEE_AU_SMMAR;zd_dt_abs'
+				if val_dt_deb_abs and val_dt_fin_abs:
+					if est_super_secr == False \
+					and val_dt_deb_abs < date.today():
+						code_erreur_dt = 'COHERENCE_TEMPORELLE;__all__'
+					else:
+						if val_dt_deb_abs >= val_dt_fin_abs:
+							code_erreur_dt = 'ORDRE_DES_DATES;__all__'
+						else:
+							if val_dt_deb_abs < obj_statut_util.get_dt_deb_statut_util() :
+								code_erreur_dt = 'ARRIVEE_AU_SMMAR;__all__'
+
+			else:
 				code_erreur_dt = 'PAS_DE_STATUT;__all__'
 
 			# Renvoi d'une erreur si un code d'erreur est défini pour le/les champ(s) "date"
