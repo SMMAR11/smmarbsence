@@ -37,10 +37,12 @@ class Command(BaseCommand):
 
 		# Imports
 		from app.forms.gest_abs import GererAbsence
+		from app.forms.gest_abs import VerifierAbsence
 		from app.models import TAbsence
 		from app.models import TAnnee
 		from app.models import TTypeAbsence
 		from app.models import TUtilisateur
+		from app.models import TVerificationAbsence
 		from datetime import date
 
 		# Nom d'utilisateur
@@ -84,17 +86,18 @@ class Command(BaseCommand):
 					# Soumission du formulaire
 					form = GererAbsence(
 						post,
-						kw_dt_abs_tranche = 1,
-						kw_req = None,
-						kw_type_abs = abs.get_pk(),
-						kw_util = uti
+						kw_dt_abs_tranche=1,
+						kw_is_automated=True,
+						kw_req=None,
+						kw_type_abs=abs.get_pk(),
+						kw_util=uti
 					)
 
 					# Si le formulaire est valide, alors...
 					if form.is_valid():
-						# Si l'absence n'est pas déjà existante, alors
-						# génération automatique d'une instance
-						# TAbsence
+
+						# Si l'absence n'est pas déjà existante,
+						# alors...
 						if not TAbsence.objects.filter(
 							dt_abs=[d],
 							indisp_abs=[when],
@@ -102,4 +105,35 @@ class Command(BaseCommand):
 							id_util_emett=uti,
 							num_annee_id=ann
 						).exists():
-							form.save()
+
+							# Affichage de la date
+							print(d)
+
+							# Création d'une instance TAbsence
+							abs_new = form.save()
+
+							# Définition des paramètres POST
+							post2 = {
+								'est_autor': True,
+								'comm_verif_abs': '''
+								Absence acceptée automatiquement
+								'''
+							}
+
+							# Soumission du formulaire de vérification
+							form2 = VerifierAbsence(
+								post2,
+								kw_abs=abs_new
+							)
+
+							# Si le formulaire est valide, alors...
+							if form2.is_valid():
+
+								# Si la vérification de l'absence n'est
+								# pas déjà existante, alors génération
+								# automatique d'une instance
+								# TVerificationAbsence
+								if not TVerificationAbsence.objects \
+								.filter(id_abs_mere=abs_new) \
+								.exists():
+									print(form2.save())

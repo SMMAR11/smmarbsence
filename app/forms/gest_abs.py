@@ -71,6 +71,7 @@ class GererAbsence(forms.ModelForm) :
 		self.kw_req = kwargs.pop('kw_req', None)
 		kw_type_abs = kwargs.pop('kw_type_abs', None)
 		self.kw_util = kwargs.pop('kw_util', None)
+		self.kw_is_automated = kwargs.pop('kw_is_automated', False)
 
 		super(GererAbsence, self).__init__(*args, **kwargs)
 
@@ -462,72 +463,76 @@ class GererAbsence(forms.ModelForm) :
 		for elem in init_tranche_dt_abs(tab) :
 			TDatesAbsence.objects.create(dt_abs = elem['dt_abs'], indisp_dt_abs = elem['indisp_dt_abs'], id_abs = obj)
 
-		if est_super_secr == True :
+		# Envoi d'un message s'il ne s'agit pas d'une absence générée
+		# automatiquement (temps partiels notamment)
+		if not self.kw_is_automated:
 
-			# Autorisation automatique de l'absence si super-secrétaire
-			TVerificationAbsence.objects.create(
-				pk = obj.get_pk(),
-				dt_verif_abs = get_tz(),
-				est_autor = True,
-				id_type_abs_final = obj.get_type_abs(),
-				id_util_verif = self.kw_util
-			)
+			if est_super_secr == True :
 
-			# Définition de l'URL de consultation
-			set_reverse = reverse('consult_abs', args = [obj.get_pk()])
+				# Autorisation automatique de l'absence si super-secrétaire
+				TVerificationAbsence.objects.create(
+					pk = obj.get_pk(),
+					dt_verif_abs = get_tz(),
+					est_autor = True,
+					id_type_abs_final = obj.get_type_abs(),
+					id_util_verif = self.kw_util
+				)
 
-			# Initialisation des paramètres du message (envoi unique vers l'agent concerné)
-			tab_params_mess = [self.kw_req, {
-				'corps_mess' : '''
-				L'agent {0} a émis automatiquement une absence du type suivant : « {1} ». Pour consulter les modalités
-				de l'absence, veuillez cliquer sur le lien suivant : <a href="{2}">{3}</a>.
-				'''.format(
-					obj.get_util_connect().get_nom_complet(),
+				# Définition de l'URL de consultation
+				set_reverse = reverse('consult_abs', args = [obj.get_pk()])
+
+				# Initialisation des paramètres du message (envoi unique vers l'agent concerné)
+				tab_params_mess = [self.kw_req, {
+					'corps_mess' : '''
+					L'agent {0} a émis automatiquement une absence du type suivant : « {1} ». Pour consulter les
+					modalités de l'absence, veuillez cliquer sur le lien suivant : <a href="{2}">{3}</a>.
+					'''.format(
+						obj.get_util_connect().get_nom_complet(),
+						obj.get_type_abs(),
+						set_reverse,
+						set_reverse
+					),
+					'obj_mess' : 'Émission automatique d\'une absence'
+				}, [obj.get_util_emett()]]
+
+			else :
+
+				# Obtention du type utilisateur pouvant vérifier l'absence
+				get_type_util_verif = obj.get_type_abs().get_gpe_type_abs().get_type_util().get_pk()
+
+				# Définition de l'URL de vérification
+				set_reverse = reverse('verif_abs', args = [obj.get_pk()])
+
+				# Initialisation du corps du message
+				set_corps_mess = '''
+				L'agent {0} souhaite une absence du type suivant : « {1} ». Pour vérifier sa demande d'absence,
+				veuillez cliquer sur le lien suivant : <a href="{2}">{3}</a>.
+				'''
+
+				# Initialisation des paramètres relatifs au corps du message
+				tab_format_corps_mess = [
+					obj.get_util_emett().get_nom_complet(),
 					obj.get_type_abs(),
 					set_reverse,
 					set_reverse
-				),
-				'obj_mess' : 'Émission automatique d\'une absence'
-			}, [obj.get_util_emett()]]
+				]
 
-		else :
+				# Réinitialisation du corps du message et de ses paramètres
+				if obj.get_util_emett() != obj.get_util_connect() :
+					set_corps_mess = '''
+					L'agent {0} a demandé une absence du type suivant pour l'agent {1} : « {2} ». Pour vérifier sa
+					demande d'absence, veuillez cliquer sur le lien suivant : <a href="{3}">{4}</a>.
+					'''
+					tab_format_corps_mess.insert(0, obj.get_util_connect().get_nom_complet())
 
-			# Obtention du type utilisateur pouvant vérifier l'absence
-			get_type_util_verif = obj.get_type_abs().get_gpe_type_abs().get_type_util().get_pk()
+				# Initialisation des paramètres du message (envoi vers les agents concernés)
+				tab_params_mess = [self.kw_req, {
+					'corps_mess' : set_corps_mess.format(*tab_format_corps_mess),
+					'obj_mess' : 'Demande d\'absence'
+				}, TTypeUtilisateur.objects.get(pk = get_type_util_verif).get_util_set().all()]
 
-			# Définition de l'URL de vérification
-			set_reverse = reverse('verif_abs', args = [obj.get_pk()])
-
-			# Initialisation du corps du message
-			set_corps_mess = '''
-			L'agent {0} souhaite une absence du type suivant : « {1} ». Pour vérifier sa demande d'absence, veuillez
-			cliquer sur le lien suivant : <a href="{2}">{3}</a>.
-			'''
-
-			# Initialisation des paramètres relatifs au corps du message
-			tab_format_corps_mess = [
-				obj.get_util_emett().get_nom_complet(),
-				obj.get_type_abs(),
-				set_reverse,
-				set_reverse
-			]
-
-			# Réinitialisation du corps du message et de ses paramètres
-			if obj.get_util_emett() != obj.get_util_connect() :
-				set_corps_mess = '''
-				L'agent {0} a demandé une absence du type suivant pour l'agent {1} : « {2} ». Pour vérifier sa demande
-				d'absence, veuillez cliquer sur le lien suivant : <a href="{3}">{4}</a>.
-				'''
-				tab_format_corps_mess.insert(0, obj.get_util_connect().get_nom_complet())
-
-			# Initialisation des paramètres du message (envoi vers les agents concernés)
-			tab_params_mess = [self.kw_req, {
-				'corps_mess' : set_corps_mess.format(*tab_format_corps_mess),
-				'obj_mess' : 'Demande d\'absence'
-			}, TTypeUtilisateur.objects.get(pk = get_type_util_verif).get_util_set().all()]
-
-		# Envoi d'un message aux agents concernés
-		envoy_mess(*tab_params_mess)
+			# Envoi d'un message aux agents concernés
+			envoy_mess(*tab_params_mess)
 
 		return obj
 
@@ -797,25 +802,29 @@ class VerifierAbsence(forms.ModelForm) :
 		obj.id_util_verif = self.kw_util_connect
 		obj.save()
 
-		# Définition de l'URL de vérification
-		set_reverse = reverse('consult_abs', args = [obj.get_pk()])
+		# Envoi d'un message s'il ne s'agit pas d'une absence vérifiée
+		# automatiquement (temps partiels notamment)
+		if obj.get_util_verif():
 
-		# Initialisation des paramètres du message (envoi unique vers l'agent concerné)
-		tab_params_mess = [self.kw_req, {
-			'corps_mess' : '''
-			L'agent {0} a {1} votre demande d'absence. Pour en savoir plus, veuillez cliquer sur le lien suivant :
-			<a href="{2}">{3}</a>.
-			'''.format(
-				obj.get_util_verif().get_nom_complet(),
-				'autorisé' if obj.get_est_autor() == True else 'refusé',
-				set_reverse,
-				set_reverse
-			),
-			'obj_mess' : '{} d\'absence'.format('Autorisation' if obj.get_est_autor() == True else 'Refus')
-		}, [obj.get_abs().get_util_emett()]]
+			# Définition de l'URL de vérification
+			set_reverse = reverse('consult_abs', args = [obj.get_pk()])
 
-		# Envoi d'un message à l'agent concerné
-		envoy_mess(*tab_params_mess)
+			# Initialisation des paramètres du message (envoi unique vers l'agent concerné)
+			tab_params_mess = [self.kw_req, {
+				'corps_mess' : '''
+				L'agent {0} a {1} votre demande d'absence. Pour en savoir plus, veuillez cliquer sur le lien suivant :
+				<a href="{2}">{3}</a>.
+				'''.format(
+					obj.get_util_verif().get_nom_complet(),
+					'autorisé' if obj.get_est_autor() == True else 'refusé',
+					set_reverse,
+					set_reverse
+				),
+				'obj_mess' : '{} d\'absence'.format('Autorisation' if obj.get_est_autor() == True else 'Refus')
+			}, [obj.get_abs().get_util_emett()]]
+
+			# Envoi d'un message à l'agent concerné
+			envoy_mess(*tab_params_mess)
 
 		return obj
 
