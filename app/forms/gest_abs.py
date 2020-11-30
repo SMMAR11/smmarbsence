@@ -64,6 +64,7 @@ class GererAbsence(forms.ModelForm) :
 		from app.models import TTypeAbsence
 		from app.models import TUtilisateur
 		from datetime import date
+		from dateutil.relativedelta import relativedelta
 		from django.conf import settings
 
 		# Initialisation des arguments
@@ -116,19 +117,32 @@ class GererAbsence(forms.ModelForm) :
 				tab_annee = [(a.get_pk(), a) for a in TAnnee.objects.all()]
 			else :
 				tab_annee = []
+				current_date = date.today()
 				for a in TAnnee.objects.all() :
-					if a.get_plage_conges_annee()[0] <= date.today() <= a.get_plage_conges_annee()[1] :
+					append = False
+					# Cas de l'année en cours
+					if a.get_plage_conges_annee()[0] <= current_date <= a.get_plage_conges_annee()[1] :
+						append = True
+					# Cas de l'année suivante (prévision des congés de fin d'année)
+					if a.get_plage_conges_annee()[0] <= current_date + relativedelta(months=2) <= a.get_plage_conges_annee()[1] :
+						append = True
+					if append:
 						tab_annee.append((a.get_pk(), a))
 
 				# Réinitialisation des choix valides de la liste déroulante des années en cas de demande d'une absence
 				# différente d'un congé pour l'année X-1
+				'''
 				if kw_type_abs and TTypeAbsence.objects.get(
 					pk = kw_type_abs
 				).get_gpe_type_abs().get_pk() != settings.DB_PK_DATAS['C_PK'] :
 					tab_annee = [(a.get_pk(), a) for a in TAnnee.objects.filter(pk = date.today().year)]
+				'''
 
 			# Définition des années valides
 			self.fields['zl_annee'].choices = tab_annee
+
+			# Définition de l'année par défaut (année en cours)
+			self.fields['zl_annee'].initial = date.today().year
 
 		# Gestion des champs "date"
 		if kw_dt_abs_tranche is not None :
