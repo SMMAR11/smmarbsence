@@ -3,7 +3,7 @@ Django==1.10.6
 django-jquery==3.1.0
 ephem==3.7.6.0
 lunardate==0.1.5
-lxml==3.8.0
+lxml==4.6.2
 num2words==0.5.4
 psycopg2-binary==2.8.5
 pyCalverter==1.6.1
