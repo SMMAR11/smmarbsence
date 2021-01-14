@@ -29,8 +29,12 @@ class Command(BaseCommand):
 			from datetime import date
 			from datetime import timedelta
 
+			# Récupération du premier temps partiel de l'année
 			d = date(year, 1, 1)
-			d += timedelta(days=weekday - d.weekday())
+			while d.weekday() != weekday:
+				d += timedelta(days=1)
+			
+			# Récupération de tous les temps partiels de l'année
 			while d.year == year:
 				yield d
 				d += timedelta(days=7)
