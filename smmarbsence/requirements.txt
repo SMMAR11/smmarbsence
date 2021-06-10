@@ -1,5 +1,5 @@
 beautifulsoup4==4.6.0
-Django==1.10.6
+Django==2.2.24
 django-jquery==3.1.0
 ephem==3.7.6.0
 lunardate==0.1.5
