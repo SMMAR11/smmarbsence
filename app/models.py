@@ -1393,6 +1393,7 @@ class TDatesAbsence(models.Model) :
 			obj_gpe_type_abs = self.get_abs().get_type_abs_final().get_gpe_type_abs()
 
 		return {
+			'abrev_gpe_type_abs': obj_gpe_type_abs.get_abrev_gpe_type_abs(),
 			'coul_gpe_type_abs' : obj_gpe_type_abs.get_coul_gpe_type_abs(),
 			'int_dt_abs' : '{0} {1}'.format(
 				obj_gpe_type_abs.get_abrev_gpe_type_abs(),

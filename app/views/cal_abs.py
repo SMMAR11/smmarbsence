@@ -172,10 +172,10 @@ def cal_abs(_req, _status) :
 						}
 
 						# Détermination des styles CSS et de l'intitulé complet du groupe de type d'absence
+						donn_cal_abs = dta.get_donn_cal_abs()
 						set_style = tab_css_div[dta.indisp_dt_abs]
 						set_title = ''
-						if coul == True or a == obj_util :
-							donn_cal_abs = dta.get_donn_cal_abs()
+						if (coul == True) or (a == obj_util) or (donn_cal_abs['abrev_gpe_type_abs'] == 'TLT'):
 							set_style += ' background-color: {};'.format(donn_cal_abs['coul_gpe_type_abs'])
 							set_title = ' title="{}"'.format(donn_cal_abs['int_dt_abs'])
 
