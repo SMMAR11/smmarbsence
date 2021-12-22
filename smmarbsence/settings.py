@@ -147,12 +147,12 @@ ERROR_MESSAGES = {
 }
 
 USER_STATUS = [
-    { 'us' : 100, 'c_max' : 32, 'r_max' : 26 },
-    { 'us' : 90, 'c_max' : 29.5, 'r_max' : 23 },
-    { 'us' : 80, 'c_max' : 27, 'r_max' : 21 },
-    { 'us' : 70, 'c_max' : 24.5, 'r_max' : 18 },
-    { 'us' : 60, 'c_max' : 22, 'r_max' : 16 },
-    { 'us' : 50, 'c_max' : 19.5, 'r_max' : 13 }
+    { 'us' : 100, 'c_max' : 32, 'r_max' : 24 },
+    { 'us' : 90, 'c_max' : 29.5, 'r_max' : 21.5 },
+    { 'us' : 80, 'c_max' : 27, 'r_max' : 19 },
+    { 'us' : 70, 'c_max' : 24.5, 'r_max' : 17 },
+    { 'us' : 60, 'c_max' : 22, 'r_max' : 14.5 },
+    { 'us' : 50, 'c_max' : 19.5, 'r_max' : 12 }
 ]
 
 ADMINS = [(
@@ -167,9 +167,6 @@ DB_PK_DATAS = {
     'CET_PK' : config('CET_PK', cast = int),
     'RTT_PK' : config('RTT_PK', cast = int)
 }
-
-#RTT_QUOTAS = [2, 2, 2, 2, 2, 2, 3, 3, 2, 2, 2, 2]
-RTT_QUOTAS = config('RTT_QUOTAS', cast = Csv(int))
 
 SMMAR_YEAR_CREATION = 2003
 

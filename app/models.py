@@ -1108,6 +1108,7 @@ class TTypeAbsence(models.Model) :
 	id_gpe_type_abs = models.ForeignKey(
 		TGroupeTypeAbsence, on_delete = models.CASCADE, verbose_name = 'Groupe de type d\'absence'
 	)
+	lmt_type_abs = models.TextField(blank=True, verbose_name='Limite')
 
 	class Meta :
 		db_table = 't_type_absence'

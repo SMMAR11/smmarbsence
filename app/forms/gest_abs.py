@@ -167,6 +167,8 @@ class GererAbsence(forms.ModelForm) :
 		from datetime import date
 		from django.conf import settings
 		from num2words import num2words
+		import calendar
+		import json
 
 		# Stockage des données du formulaire
 		cleaned_data = super(GererAbsence, self).clean()
@@ -182,7 +184,8 @@ class GererAbsence(forms.ModelForm) :
 		val_indisp_dt_abs = cleaned_data.get('zl_indisp_dt_abs')
 
 		# Tentative d'obtention d'instances globales
-		obj_gpe_type_abs = TTypeAbsence.objects.get(pk = val_type_abs).get_gpe_type_abs() if val_type_abs else None
+		obj_type_abs = TTypeAbsence.objects.filter(pk = val_type_abs).first()
+		obj_gpe_type_abs = obj_type_abs.get_gpe_type_abs() if obj_type_abs else None
 		obj_annee = TAnnee.objects.get(pk = val_annee) if val_annee else None
 		obj_util = TUtilisateur.objects.get(pk = val_util) if val_util else None
 
@@ -340,55 +343,181 @@ class GererAbsence(forms.ModelForm) :
 					if message : self.add_error('__all__', message)
 
 				if tab and est_secr == False and obj_gpe_type_abs and obj_annee :
-					if obj_gpe_type_abs.get_pk() == settings.DB_PK_DATAS['RTT_PK'] :
+
+					# Récupération de la limite de journées paramétrée et
+					# valide pour le type d'absence sélectionné
+					try:
+						lmt_type_abs = json.loads(obj_type_abs.lmt_type_abs)
+					except:
+						lmt_type_abs = None
+
+					# Si limite de journées, alors...
+					if lmt_type_abs:
 
 						# Conversion tableau associatif -> tableau
-						tab_dt_abs = [[elem['dt_abs'], elem['indisp_dt_abs']] for elem in init_tranche_dt_abs(tab)]
+						tab_dt_abs = [
+							[elem['dt_abs'], elem['indisp_dt_abs']
+						] for elem in init_tranche_dt_abs(tab)]
 
-						# Groupement d'objets "date" par mois
-						tab_dt_abs__group_by = [[j for j in tab_dt_abs if j[0].month == i] for i in set(
-							map(lambda l : l[0].month, tab_dt_abs)
-						)]
+						# Pour chaque limite de journées...
+						for k1, v1 in lmt_type_abs.items():
 
-						erreur = False
-						for elem in tab_dt_abs__group_by :
+							# Si limite au mois, alors...
+							if k1 == 'MONTH':
 
-							# Stockage du mois
-							mois = elem[0][0].month
+								# Groupement d'objets "date" par mois
+								tab_dt_abs__group_by = [[
+									j for j in tab_dt_abs if j[0].month == i
+								] for i in set(
+									map(lambda l: l[0].month, tab_dt_abs)
+								)]
 
-							# Stockage du jeu de données des dates d'absence d'un agent à un mois donné d'une année
-							qs_dt_abs = TDatesAbsence.objects.filter(
-								dt_abs__month = mois,
-								dt_abs__year = obj_annee.get_pk(),
-								id_abs__id_util_emett = obj_util
-							)
+								erreur = False
+								for elem in tab_dt_abs__group_by:
 
-							# Initialisation du nombre de jours de RTT autorisés et prévus à un mois donné d'une année
-							nbre_rtt = 0
+									# Stockage du mois
+									mois = elem[0][0].month
 
-							# Cumul du nombre de jours de RTT déjà autorisés
-							for da in qs_dt_abs :
-								obj_verif_abs = da.get_abs().get_verif_abs()
-								if obj_verif_abs and obj_verif_abs.get_type_abs_final() :
-									if obj_verif_abs.get_type_abs_final().get_gpe_type_abs() == obj_gpe_type_abs :
-										if da.get_abs().get_etat_abs() == 1 :
-											if da.get_indisp_dt_abs() == 'WD' :
-												nbre_rtt += 1
-											else :
-												nbre_rtt += 0.5
+									# Stockage du jeu de données des dates
+									# d'absence d'un agent à un mois donné
+									# d'une année
+									qs_dt_abs = TDatesAbsence.objects.filter(
+										dt_abs__month=mois,
+										dt_abs__year=obj_annee.get_pk(),
+										id_abs__id_util_emett=obj_util
+									)
 
-							# Cumul du nombre de jours de RTT prévus
-							for elem_2 in elem :
-								if elem_2[1] == 'WD' :
-									nbre_rtt += 1
-								else :
-									nbre_rtt += 0.5
+									# Initialisation du nombre de jours
+									# autorisés et prévus à un mois donné
+									# d'une année
+									nbre = 0
 
-							# Vérification du quota
-							if nbre_rtt > settings.RTT_QUOTAS[mois - 1] : erreur = True
+									# Cumul du nombre de jours déjà autorisés
+									for da in qs_dt_abs:
+										obj_verif_abs = da.get_abs().get_verif_abs()
+										if obj_verif_abs and obj_verif_abs.get_type_abs_final():
+											if obj_verif_abs.get_type_abs_final().get_gpe_type_abs() == obj_gpe_type_abs:
+												if da.get_abs().get_etat_abs() == 1:
+													if da.get_indisp_dt_abs() == 'WD':
+														nbre += 1
+													else :
+														nbre += 0.5
 
-						# Renvoi d'une erreur si le quota RTT n'est pas respecté
-						if erreur == True : self.add_error('__all__', 'Veuillez respecter le quota de RTT par mois.')
+									# Cumul du nombre de jours prévus
+									for elem_2 in elem:
+										if elem_2[1] == 'WD':
+											nbre += 1
+										else :
+											nbre += 0.5
+
+									# Vérification du quota
+									if nbre > v1 :
+										erreur = True
+
+								# Renvoi d'une erreur si le quota n'est
+								# pas respecté
+								if erreur == True :
+									self.add_error(
+										'__all__',
+										'''
+										Quota mensuel non respecté (type
+										d'absence : {} / limite : {})
+										'''.format(obj_type_abs, v1)
+									)
+
+							# Si limite à la semaine, alors...
+							if k1 == 'WEEK':
+
+								# Groupement d'objets "date" par semaine
+								tab_dt_abs__group_by = [[
+									j for j in tab_dt_abs \
+										if j[0].isocalendar()[1] == i
+								] for i in set(map(
+									lambda l: l[0].isocalendar()[1],
+									tab_dt_abs
+								))]
+
+								erreur = False
+								for elem in tab_dt_abs__group_by:
+
+									# Stockage de la semaine
+									week = elem[0][0].isocalendar()[1]
+
+									# Fonction pour récupérer les dates
+									# de début et de fin d'une semaine
+									# donnée
+									def get_date_range_from_week(pyear, pweek):
+
+										# Imports
+										import datetime
+										import time
+
+										first \
+											= datetime.datetime.strptime(
+												'{}-W{}-1'.format(
+													pyear, pweek
+												), 
+												'%Y-W%W-%w'
+										).date()
+										last \
+											= first \
+											+ datetime.timedelta(days=6.9)
+
+										return first, last 
+
+									# Récupération des dates de début
+									# et de fin de la semaine
+									firstdate, lastdate \
+										= get_date_range_from_week(
+											obj_annee.get_pk(), week
+									)
+
+									# Stockage du jeu de données des dates
+									# d'absence d'un agent à une
+									# semaine donnée
+									qs_dt_abs = TDatesAbsence.objects.filter(
+										dt_abs__gte=firstdate,
+										dt_abs__lte=lastdate,
+										id_abs__id_util_emett=obj_util
+									)
+
+									# Initialisation du nombre de jours
+									# autorisés et prévus à une semaine
+									# donnée
+									nbre = 0
+
+									# Cumul du nombre de jours déjà autorisés
+									for da in qs_dt_abs:
+										obj_verif_abs = da.get_abs().get_verif_abs()
+										if obj_verif_abs and obj_verif_abs.get_type_abs_final():
+											if obj_verif_abs.get_type_abs_final().get_gpe_type_abs() == obj_gpe_type_abs:
+												if da.get_abs().get_etat_abs() == 1:
+													if da.get_indisp_dt_abs() == 'WD':
+														nbre += 1
+													else :
+														nbre += 0.5
+
+									# Cumul du nombre de jours prévus
+									for elem_2 in elem:
+										if elem_2[1] == 'WD':
+											nbre += 1
+										else :
+											nbre += 0.5
+
+									# Vérification du quota
+									if nbre > v1 :
+										erreur = True
+
+								# Renvoi d'une erreur si le quota n'est
+								# pas respecté
+								if erreur == True :
+									self.add_error(
+										'__all__',
+										'''
+										Quota hebdomadaire non respecté (type
+										d'absence : {} / limite : {})
+										'''.format(obj_type_abs, v1)
+									)
 
 				if tab and obj_gpe_type_abs :
 					if obj_gpe_type_abs.get_pk() == settings.DB_PK_DATAS['CET_PK'] :

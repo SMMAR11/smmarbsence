@@ -131,8 +131,8 @@ class GroupeTypeAbsenceFilter(SimpleListFilter) :
 
 class TypeAbsence(admin.ModelAdmin) :
 	actions = [admin.actions.delete_selected]
-	fields = ['int_type_abs', 'id_gpe_type_abs', 'pj_abs_req', 'descr_nds_type_abs']
-	list_display = ['int_type_abs', 'id_gpe_type_abs']
+	fields = ['int_type_abs', 'id_gpe_type_abs', 'lmt_type_abs', 'pj_abs_req', 'descr_nds_type_abs']
+	list_display = ['int_type_abs', 'id_gpe_type_abs', 'lmt_type_abs']
 	list_filter = [GroupeTypeAbsenceFilter]
 
 admin.site.register(TTypeAbsence, TypeAbsence)
