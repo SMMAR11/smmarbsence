@@ -174,3 +174,185 @@ class DateFermeture(admin.ModelAdmin) :
 	list_display = ['pk__str']
 
 admin.site.register(TDateFermeture, DateFermeture)
+
+# ---------------------------------------------------------------------
+# Administration du modèle TAbsenceRecurrenteAbr
+# ---------------------------------------------------------------------
+
+class AbsenceRecurrenteAbr(admin.ModelAdmin):
+
+	# Options
+	actions = [admin.actions.delete_selected]
+	fields = [
+		'uti_id',
+		'tab_id',
+		'abr_jour',
+		'abr_duree',
+		'abr_date_dbt',
+		'abr_date_fn'
+	]
+	list_display = [
+		'abr_id',
+		'uti_id',
+		'tab_id',
+		'abr_jour',
+		'abr_duree',
+		'abr_date_dbt',
+		'abr_date_fn'
+	]
+
+	# Méthodes Django
+
+	def delete_model(self, rq, obj):
+		self.delete_absences(abr=obj)
+		oModel = super().delete_model(rq, obj)
+		return oModel
+
+	def get_readonly_fields(self, rq, obj=None) :
+		if obj:
+			return self.readonly_fields + ('uti_id', 'tab_id', 'abr_jour', 'abr_duree', 'abr_date_dbt', 'abr_date_fn')
+		return self.readonly_fields
+
+	def save_model(self, rq, obj, form, change):
+		oModel = super().save_model(rq, obj, form, change)
+		self.insert_absences(abr=obj)
+		return oModel
+
+	# Méthodes
+
+	def delete_absences(self, abr):
+
+		"""
+		Suppression d'absences (nettoyage) avant insertion automatisée
+		"""
+
+		# Pour chaque date...
+		for date in self.get_all_dates(
+			abr.abr_date_dbt, abr.abr_date_fn, abr.abr_jour
+		):
+
+			# Instance TAnnee
+			ann = TAnnee.objects.filter(pk=date.year).first()
+
+			# Si instance TAnnee détectée, alors...
+			if ann:
+
+				# Instances TAbsence à supprimer potentiellement
+				qs_abs = TAbsence.objects.filter(
+					dt_abs=[date],
+					indisp_abs=[abr.abr_duree],
+					id_type_abs=abr.tab_id,
+					id_util_emett=abr.uti_id,
+					num_annee_id=ann
+				)
+
+				# Si jeu de données non vierge, alors suppression des
+				# instances TAbsence
+				if qs_abs.exists():
+					qs_abs.delete()
+
+		return True
+
+	def get_all_dates(self, begin, end, weekday):
+
+		"""
+		Toutes les dates selon une plage de dates et un jour de la
+		semaine donnés
+		"""
+
+		# Imports
+		from datetime import timedelta
+
+		# Récupération de la première date
+		date = begin
+		while date.weekday() != weekday:
+			date += timedelta(days=1)
+
+		# Récupération de toutes les dates
+		while date <= end:
+			yield date
+			date += timedelta(days=7)
+
+	def insert_absences(self, abr):
+
+		"""
+		Insertion automatisée d'absences
+		"""
+
+		# Imports
+		from app.forms.gest_abs import GererAbsence
+		from app.forms.gest_abs import VerifierAbsence
+
+		# Pour chaque date...
+		for date in self.get_all_dates(
+			abr.abr_date_dbt, abr.abr_date_fn, abr.abr_jour
+		):
+
+			# Définition des paramètres POST
+			post = {
+				'zl_util': abr.uti_id.get_pk(),
+				'zl_type_abs': abr.tab_id.get_pk(),
+				'zl_annee': date.year,
+				'rb_dt_abs_tranche': 1,
+				'zd_dt_abs': date,
+				'zl_indisp_dt_abs': abr.abr_duree,
+				'comm_abs': 'Absence générée automatiquement'
+			}
+
+			# Soumission du formulaire
+			form = GererAbsence(
+				post,
+				kw_dt_abs_tranche=1,
+				kw_is_automated=True,
+				kw_req=None,
+				kw_type_abs=abr.tab_id,
+				kw_util=abr.uti_id
+			)
+
+			# Instance TAnnee
+			ann = TAnnee.objects.filter(pk=date.year).first()
+
+			# Si le formulaire est valide, et qu'une instance TAnnee a
+			# été détectée, alors...
+			if form.is_valid() and ann:
+
+				# Si l'absence n'est pas déjà existante, alors...
+				if not TAbsence.objects.filter(
+					dt_abs=[date],
+					indisp_abs=[abr.abr_duree],
+					id_type_abs=abr.tab_id,
+					id_util_emett=abr.uti_id,
+					num_annee_id=ann
+				).exists():
+
+					# Création d'une instance TAbsence
+					abs_new = form.save()
+
+					# Définition des paramètres POST
+					post2 = {
+						'est_autor': True,
+						'comm_verif_abs': '''
+						Absence acceptée automatiquement
+						'''
+					}
+
+					# Soumission du formulaire de vérification
+					form2 = VerifierAbsence(
+						post2,
+						kw_abs=abs_new
+					)
+
+					# Si le formulaire est valide, alors...
+					if form2.is_valid():
+
+						# Si la vérification de l'absence n'est pas
+						# déjà existante, alors génération automatique
+						# d'une instance TVerificationAbsence
+						if not TVerificationAbsence.objects \
+						.filter(id_abs_mere=abs_new) \
+						.exists():
+							print(form2.save())
+
+		return True
+
+admin.site.register(TAbsenceRecurrenteAbr, AbsenceRecurrenteAbr)

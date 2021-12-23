@@ -923,7 +923,7 @@ class TMessagesUtilisateur(models.Model) :
 class TRolesUtilisateur(models.Model) :
 
 	# Attributs
-	code_type_util = models.ForeignKey(TTypeUtilisateur, on_delete = models.DO_NOTHING)
+	code_type_util = models.ForeignKey(TTypeUtilisateur, on_delete = models.CASCADE)
 	id_util = models.ForeignKey(TUtilisateur, on_delete = models.CASCADE)
 
 	class Meta :
@@ -1069,7 +1069,7 @@ class TGroupeTypeAbsence(models.Model) :
 	)
 	code_type_util = models.ForeignKey(
 		TTypeUtilisateur,
-		on_delete = models.DO_NOTHING,
+		on_delete = models.CASCADE,
 		verbose_name = 'Type d\'utilisateur éligible à la vérification'
 	)
 
@@ -1155,8 +1155,8 @@ class TAbsence(models.Model) :
 		verbose_name = 'Insérer le justificatif d\'absence <span class="fl-complement">(fichier PDF)</span>'
 	)
 	src_alerte = models.BooleanField(verbose_name = 'Peut être soumise à une alerte ?')
-	id_type_abs = models.ForeignKey(TTypeAbsence, on_delete = models.DO_NOTHING)
-	id_util_connect = models.ForeignKey(TUtilisateur, on_delete = models.DO_NOTHING, null = True, related_name = '+')
+	id_type_abs = models.ForeignKey(TTypeAbsence, on_delete = models.CASCADE)
+	id_util_connect = models.ForeignKey(TUtilisateur, on_delete = models.SET_NULL, null = True, related_name = '+')
 	id_util_emett = models.ForeignKey(TUtilisateur, on_delete = models.CASCADE)
 	num_annee = models.ForeignKey(TAnnee, on_delete = models.CASCADE)
 
@@ -1414,8 +1414,8 @@ class TVerificationAbsence(models.Model) :
 	)
 	dt_verif_abs = models.DateTimeField()
 	est_autor = models.BooleanField(default = False, verbose_name = 'Autorisez-vous l\'absence ?')
-	id_type_abs_final = models.ForeignKey(TTypeAbsence, on_delete = models.DO_NOTHING)
-	id_util_verif = models.ForeignKey(TUtilisateur, null = True, on_delete = models.DO_NOTHING)
+	id_type_abs_final = models.ForeignKey(TTypeAbsence, on_delete = models.CASCADE)
+	id_util_verif = models.ForeignKey(TUtilisateur, null = True, on_delete = models.SET_NULL)
 
 	class Meta :
 		db_table = 't_verification_absence'
@@ -1450,3 +1450,46 @@ class TDateFermeture(models.Model) :
 	# Getters
 	def get_pk(self) : return self.pk
 	def get_pk__str(self) : from app.functions import get_local_format; return get_local_format(self.get_pk())
+
+class TAbsenceRecurrenteAbr(models.Model):
+
+	# Colonnes
+	abr_id = models.AutoField(primary_key=True, verbose_name='ID')
+	abr_date_dbt = models.DateField(verbose_name='Date de début (incluse)')
+	abr_date_fn = models.DateField(verbose_name='Date de fin (incluse)')
+	abr_duree = models.CharField(
+		choices=[
+			('WD', 'Journée entière'),
+			('AM', 'Matin'),
+			('PM', 'Après-midi')
+		],
+		max_length=2,
+		verbose_name='Durée de début'
+	)
+	abr_jour = models.IntegerField(
+		choices=[
+			(0, 'Lundi'),
+			(1, 'Mardi'),
+			(2, 'Mercredi'),
+			(3, 'Jeudi'),
+			(4, 'Vendredi')
+		],
+		verbose_name='Jour'
+	)
+	tab_id = models.ForeignKey(
+		TTypeAbsence,
+		db_column='tab_id',
+		on_delete=models.CASCADE,
+		verbose_name='Type d\'absence'
+	)
+	uti_id = models.ForeignKey(
+		TUtilisateur,
+		db_column='uti_id',
+		on_delete=models.CASCADE,
+		verbose_name='Agent'
+	)
+	
+	class Meta:
+		db_table = 't_absence_recurrente_abr'
+		verbose_name = 'T_ABSENCE_RECURRENTE_ABR'
+		verbose_name_plural = 'T_ABSENCE_RECURRENTE_ABR'
