@@ -9,12 +9,12 @@
 
 /* Balises */
 a {
-	color: #3770B1;
+	color: #003960;
 }
 
 a:hover,
 a:focus {
-	color: #2C5A8E;
+	color: #2E4B5F;
 }
 
 /* Boutons */
@@ -37,11 +37,11 @@ a.custom-btn {
 }
 
 .green-btn {
-	background-color: #94C054;
+	background-color: #008E4D;
 }
 
 .green-btn:hover {
-	background-color: #779A44;
+	background-color: #2E9868;
 }
 
 /* Boutons images */
@@ -232,12 +232,12 @@ a.custom-btn {
 .icon-with-text {
 	display: inline;
 	padding-left: 22.5px;
-	color: #555;
+	color: #8A8B8D;
 }
 
 .icon-with-text:hover,
 .icon-with-text:focus {
-	color: #555;
+	color: #8A8B8D;
 	cursor: pointer;
 	text-decoration: underline;
 }
@@ -275,12 +275,12 @@ span.nt-icon {
 }
 
 .month-calendar > table > thead {
-	background-color: #3770B1;
+	background-color: #003960;
 	color: #FFF;
 }
 
 .month-calendar > table > thead > tr > th:not(:first-child) {
-	border: solid 1px #DDD;
+	border: solid 1px #DBDCDD;
 }
 
 .month-calendar > table > thead > tr > th {
@@ -305,7 +305,7 @@ span.nt-icon {
 }
 
 .mc-absence {
-	background-color: #F8B862;
+	background-color: #F58500;
 	height: 100%;
 }
 
@@ -313,7 +313,7 @@ span.nt-icon {
 .aw-container.panel {
 	margin: 0;
 	background-color: transparent;
-	border: solid 2px #3770B1;
+	border: solid 2px #003960;
 	border-radius: 5px;
 }
 
@@ -321,7 +321,7 @@ span.nt-icon {
 	padding: 5px 15px;
 	text-align: center;
 	color: #FFF;
-	background-color: #3770B1;
+	background-color: #003960;
 	border-radius: 0;
 }
 
@@ -335,7 +335,7 @@ span.nt-icon {
 
 .aw-container .panel-fieldset {
 	color: #FFF;
-	background-color: #3770B1;
+	background-color: #003960;
 	padding: 5px 15px;
 	margin-bottom: 20px;
 }
@@ -346,7 +346,7 @@ span.nt-icon {
 
 .aw-container.panel > .panel-footer {
 	padding: 5px 15px;
-	background-color: #3770B1; 
+	background-color: #003960; 
 	border: none;
 	border-radius: 0;
 	color: #FFF;
@@ -361,7 +361,7 @@ span.nt-icon {
 
 .attribute-wrapper .attribute-label,
 .field-wrapper .field-label {
-	color: #3770B1;
+	color: #003960;
 }
 
 .field-wrapper .field-label .fl-complement {
@@ -379,15 +379,15 @@ span.nt-icon {
 	width: 100%;
 	min-height: 25px;
 	font-size: 16px;
-	color: #555;
+	color: #8A8B8D;
 	background-color: #FFF;
 	padding: 0 5px;
-	border: solid 1px #DDD;
+	border: solid 1px #DBDCDD;
 	border-radius: 0;
 }
 
 .attribute-wrapper .attribute {
-	background-color: #F6F6F6;
+	background-color: #EDEDEE;
 }
 
 .field-wrapper .field > select {
@@ -408,7 +408,7 @@ span.nt-icon {
 
 .field-wrapper .field > ul > li > label {
 	font-weight: normal;
-	color: #555;
+	color: #8A8B8D;
 	margin: 0;
 }
 
@@ -418,7 +418,7 @@ span.nt-icon {
 }
 
 .field-wrapper .field input[readonly] {
-	background-color: #F6F6F6;
+	background-color: #EDEDEE;
 }
 
 .field-wrapper .field-error-message > ul {
@@ -438,8 +438,8 @@ span.nt-icon {
 	padding: 0 7.5px;
 	font-size: 12px;
 	line-height: 1.3;
-	background-color: #F6F6F6;
-	border: solid 1px #DDD;
+	background-color: #EDEDEE;
+	border: solid 1px #DBDCDD;
 	border-radius: 0;
 }
 
@@ -462,22 +462,22 @@ span.nt-icon {
 	border: none;
 	border-radius: 5px;
 	color: #FFF;
-	background-color: #F8B862;
+	background-color: #F58500;
 }
 
 .if-container > .field:hover + .if-trigger {
-	background-color: #C7944F;
+	background-color: #E6922F;
 }
 
 .if-return {
-	color: #555;
+	color: #8A8B8D;
 	display: inline-block;
 }
 
 .if-return > .file-infos {
 	display: inline-block;
 	margin-right: 5px;
-	color: #555;
+	color: #8A8B8D;
 	font-weight: bold;
 }
 
@@ -505,7 +505,7 @@ span.nt-icon {
 
 /* Couleurs */
 .theme-color {
-	color: #3770B1;
+	color: #003960;
 }
 
 /* Datatables */
@@ -519,13 +519,13 @@ span.nt-icon {
 }
 
 .custom-table table.dataTable.no-footer {
-	border: solid 1px #DDD;
+	border: solid 1px #DBDCDD;
 	border-collapse: collapse;
 	box-shadow: none;
 }
 
 .custom-table thead {
-	background-color: #3770B1;
+	background-color: #003960;
 	color: #FFF;
 
 }
@@ -534,7 +534,7 @@ span.nt-icon {
 	font-weight: normal;
 	font-style: italic;
 	padding: 2.5px 7.5px;
-	border: solid 1px #DDD;
+	border: solid 1px #DBDCDD;
 	text-align: center;
 	white-space: nowrap;
 }
@@ -554,11 +554,11 @@ span.nt-icon {
 .custom-table thead > tr > th.unbordered,
 .custom-table tbody > tr > td.unbordered {
 	border: none;
-	border-bottom: solid 1px #DDD;
+	border-bottom: solid 1px #DBDCDD;
 }
 
 .custom-table tbody > tr > td {
-	color: #555;
+	color: #8A8B8D;
 	text-align: justify;
 	padding: 2.5px 7.5px;
 }
@@ -568,11 +568,11 @@ span.nt-icon {
 }
 
 .custom-table tbody > tr:nth-of-type(even) {
-	background-color: #F6F6F6;
+	background-color: #EDEDEE;
 }
 
 .custom-table .dataTables_length {
-	color: #555;
+	color: #8A8B8D;
 	text-align: left;
 }
 
@@ -610,7 +610,7 @@ span.nt-icon {
 .custom-table .dataTables_wrapper .dataTables_paginate .paginate_button.disabled,
 .custom-table .dataTables_wrapper .dataTables_paginate .paginate_button.disabled:hover,
 .custom-table .dataTables_wrapper .dataTables_paginate .paginate_button.disabled:active {
-	color: #555 !important;
+	color: #8A8B8D !important;
 	border: solid 1px transparent;
 	background-color: transparent;
 }
@@ -618,7 +618,7 @@ span.nt-icon {
 .custom-table .dataTables_wrapper .dataTables_paginate .paginate_button:hover {
 	color: #FFF !important;
 	border: solid 1px transparent;
-	background: #3770B1;
+	background: #003960;
 }
 
 .custom-table .dataTables_wrapper .dataTables_paginate .paginate_button:active {
@@ -672,7 +672,7 @@ span.nt-icon {
 .datepicker table tr td.new,
 .datepicker table tr td span.old,
 .datepicker table tr td span.new {
-	color: #DDD;
+	color: #DBDCDD;
 }
 
 .datepicker .datepicker-switch:hover,
@@ -681,7 +681,7 @@ span.nt-icon {
 .datepicker table tr td.day:hover,
 .datepicker table tr td.day.focused,
 .datepicker tfoot tr th:hover {
-	background: #F6F6F6;
+	background: #EDEDEE;
 }
 
 .datepicker table tr td.active,
@@ -698,7 +698,7 @@ span.nt-icon {
 .datepicker table tr td.active:hover.active,
 .datepicker table tr td span.active.active,
 .datepicker table tr td span.active:hover.active {
-	background-color: #3770B1;
+	background-color: #003960;
 }
 
 /* Fenêtres modales */
@@ -713,25 +713,25 @@ span.nt-icon {
 }
 
 .custom-modal .modal-header {
-	color: #3770B1;
+	color: #003960;
 	padding: 5px 15px;
-	border-color: #DDD;
+	border-color: #DBDCDD;
 	text-align: center;
 }
 
 .custom-modal .modal-header > .close {
 	font-size: 24px;
-	color: #555;
+	color: #8A8B8D;
 }
 
 .custom-modal .modal-header > .close:hover,
 .custom-modal .modal-header > .close:focus {
-	color: #555;
+	color: #8A8B8D;
 	filter: alpha(opacity = 100);
 }
 
 .custom-modal .modal-body {
-	background-color: #D7E2EF;
+	background-color: #CAD2D7;
 	padding: 20px 15px 0 15px;
 	max-height: calc(100vh - 75px);
 	overflow-y: auto;
@@ -745,7 +745,7 @@ span.nt-icon {
 .custom-form {
 	margin: 0;
 	background-color: transparent;
-	border: solid 2px #3770B1;
+	border: solid 2px #003960;
 	border-radius: 5px;
 }
 
@@ -753,7 +753,7 @@ span.nt-icon {
 	padding: 5px 15px;
 	text-align: center;
 	color: #FFF;
-	background-color: #3770B1;
+	background-color: #003960;
 	border-radius: 0;
 }
 
@@ -786,7 +786,7 @@ span.nt-icon {
 
 .custom-form .panel-fieldset {
 	color: #FFF;
-	background-color: #3770B1;
+	background-color: #003960;
 	padding: 5px 15px;
 	margin-bottom: 20px;
 }
@@ -816,7 +816,7 @@ span.nt-icon {
 }
 
 #side-menu > .panel {
-	border: solid 1px #DDD;
+	border: solid 1px #DBDCDD;
 	border-radius: 0;
 	margin: 0;
 }
@@ -825,7 +825,7 @@ span.nt-icon {
 	padding: 5px;
 	border: none;
 	border-radius: 0;
-	background-color: #3770B1;
+	background-color: #003960;
 	color: #FFF;
 }
 
@@ -842,7 +842,7 @@ span.nt-icon {
 }
 
 #side-menu.panel-group > .panel > .panel-heading + .panel-collapse > .panel-body {
-	border-top: solid 1px #DDD;
+	border-top: solid 1px #DBDCDD;
 }
 
 #side-menu .panel-body {
@@ -854,23 +854,23 @@ span.nt-icon {
 }
 
 #side-menu .panel-body > table > tbody > tr:not(:first-child) {
-	border-top: solid 1px #DDD;
+	border-top: solid 1px #DBDCDD;
 }
 
 #side-menu .panel-body > table > tbody > tr > td > a {
 	padding: 5px;
-	color: #555;
+	color: #8A8B8D;
 	text-decoration: none;
 	display: block;
 }
 
 #side-menu .panel-body > table > tbody > tr > td > a:hover {
-	background-color: #F6F6F6;
+	background-color: #EDEDEE;
 }
 
 /* Onglets */
 .custom-nav-tabs {
-	border-color: #DDD;
+	border-color: #DBDCDD;
 }
 
 .custom-nav-tabs > li > a {
@@ -882,7 +882,7 @@ span.nt-icon {
 }
 
 .custom-nav-tabs.nav-justified {
-	border-bottom: solid 1px #DDD;
+	border-bottom: solid 1px #DBDCDD;
 }
 
 .custom-nav-tabs.nav-justified > li > a {
@@ -895,7 +895,7 @@ span.nt-icon {
 .custom-nav-tabs > li > a:focus,
 .custom-nav-tabs.nav-justified > li > a:hover,
 .custom-nav-tabs.nav-justified > li > a:focus {
-	color: #2C5A8E;
+	color: #2E4B5F;
 	background-color: transparent;
 }
 
@@ -906,7 +906,7 @@ span.nt-icon {
 .custom-nav-tabs.nav-justified > li.active > a:hover,
 .custom-nav-tabs.nav-justified > li.active > a:focus {
 	color: #FFF;
-	background-color: #3770B1;
+	background-color: #003960;
 	border-color: transparent;
 }
 
@@ -957,13 +957,13 @@ span.nt-icon {
 .custom-thumbnail {
 	display: block;
 	background-color: #FFF;
-	border: 1px solid #DDD;
+	border: 1px solid #DBDCDD;
 	padding: 10px 15px;
 	text-align: center;
 }
 
 .custom-thumbnail:hover {
-	border-color: #2C5A8E;
+	border-color: #2E4B5F;
 	-webkit-transition: border .2s ease-in-out;
 	-o-transition: border .2s ease-in-out;
 	transition: border .2s ease-in-out;
@@ -972,7 +972,7 @@ span.nt-icon {
 .custom-thumbnail,
 .custom-thumbnail:hover,
 .custom-thumbnail:focus {
-	color: #555;
+	color: #8A8B8D;
 	text-decoration: none;
 }
 
@@ -1006,11 +1006,11 @@ span.nt-icon {
 	padding: 5px 15px;
 	text-align: center;
 	color: #FFF;
-	background-color: #94C054;
+	background-color: #2E4B5F;
 	border: double 1px #FFF;
 	margin-bottom: 20px;
 }
 
 .custom-well.cw-c-orange {
-	background-color: #F8B862;
+	background-color: #003960;
 }

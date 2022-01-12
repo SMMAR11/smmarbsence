@@ -107,11 +107,24 @@ admin.site.register(TBonusMalusUtilisateur, BonusMalusUtilisateur)
 class GroupeTypeAbsence(admin.ModelAdmin) :
 	actions = [admin.actions.delete_selected]
 	fieldsets = [
-		['Données générales', { 'fields' : [('int_gpe_type_abs'), ('abrev_gpe_type_abs'), ('code_type_util')] }],
-		['Données complémentaires', { 'fields' : [('coul_gpe_type_abs')] }],
-		['Paramétrage de la liste déroulante', { 'fields' : [('est_disp'), ('ordre_zl_gpe_type_abs')] }]
+		['Données générales', {'fields': [
+			('int_gpe_type_abs'),
+			('abrev_gpe_type_abs'),
+			('code_type_util'),
+			('est_autoverif')
+		]}],
+		['Données complémentaires', {'fields': [('coul_gpe_type_abs')]}],
+		['Paramétrage de la liste déroulante', {'fields': [
+			('est_disp'), ('ordre_zl_gpe_type_abs')
+		]}]
 	]
-	list_display = ['int_gpe_type_abs', 'abrev_gpe_type_abs', 'code_type_util', 'coul_gpe_type_abs']
+	list_display = [
+		'int_gpe_type_abs',
+		'abrev_gpe_type_abs',
+		'code_type_util',
+		'est_autoverif',
+		'coul_gpe_type_abs'
+	]
 	ordering = ['int_gpe_type_abs']
 
 admin.site.register(TGroupeTypeAbsence, GroupeTypeAbsence)
@@ -351,7 +364,7 @@ class AbsenceRecurrenteAbr(admin.ModelAdmin):
 						if not TVerificationAbsence.objects \
 						.filter(id_abs_mere=abs_new) \
 						.exists():
-							print(form2.save())
+							form2.save()
 
 		return True
 

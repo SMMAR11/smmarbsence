@@ -1072,6 +1072,10 @@ class TGroupeTypeAbsence(models.Model) :
 		on_delete = models.CASCADE,
 		verbose_name = 'Type d\'utilisateur éligible à la vérification'
 	)
+	est_autoverif = models.BooleanField(
+		default=False,
+		verbose_name='Les absences émises doivent-elles être vérifiées automatiquement ?'
+	)
 
 	class Meta :
 		db_table = 't_groupe_type_absence'

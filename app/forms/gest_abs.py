@@ -52,8 +52,6 @@ class GererAbsence(forms.ModelForm) :
 
 		fields = ['comm_abs', 'pj_abs']
 		model = TAbsence
-		labels = {}
-		widgets = {}
 
 	def __init__(self, *args, **kwargs) :
 
@@ -81,20 +79,32 @@ class GererAbsence(forms.ModelForm) :
 
 		if self.kw_util :
 
-			# L'agent est-il secrétaire (et super-secrétaire) ?
-			est_secr = True if 'S' in self.kw_util.get_type_util__list() else False
-			est_super_secr = True if est_secr == True and self.kw_util.get_est_super_secr() == True else False
+			# L'agent est-il secrétaire ?
+			if 'S' in self.kw_util.get_type_util__list():
+				est_secr = True
+			else:
+				est_secr = False
+
+			# L'agent est-il super-secrétaire ?
+			if est_secr and self.kw_util.get_est_super_secr():
+				est_super_secr = True
+			else:
+				est_super_secr = False
 
 			# Initialisation des choix valides de la liste déroulante des utilisateurs
 			if est_secr == True :
-				qs_util = TUtilisateur.objects.filter(
-					en_act = True
-				) if est_super_secr == False else TUtilisateur.objects.all()
+				if est_super_secr:
+					qs_util = TUtilisateur.objects.all()
+				else:
+					qs_util = TUtilisateur.objects.filter(en_act=True)
 				tab_util = [(u.get_pk(), u.get_nom_complet()) for u in qs_util]
 			else :
-				tab_util = [
-					(self.kw_util.get_pk(), self.kw_util.get_nom_complet())
-				] if self.kw_util.get_en_act() == True else [settings.CF_EMPTY_VALUE]
+				if self.kw_util.get_en_act():
+					tab_util = [(
+						self.kw_util.get_pk(), self.kw_util.get_nom_complet()
+					)]
+				else:
+					tab_util = [settings.CF_EMPTY_VALUE]
 
 			# Définition des utilisateurs valides ainsi que de l'utilisateur par défaut
 			self.fields['zl_util'].choices = tab_util
@@ -102,18 +112,21 @@ class GererAbsence(forms.ModelForm) :
 
 			# Initialisation des choix valides de la liste déroulante des types d'absence
 			tab_type_abs = []
-			if est_secr == True :
+			if est_secr:
 				qs_gpe_type_abs = TGroupeTypeAbsence.objects.all()
 			else :
-				qs_gpe_type_abs = TGroupeTypeAbsence.objects.filter(est_disp = True)
+				qs_gpe_type_abs = TGroupeTypeAbsence.objects.filter(est_disp=True)
 			for gta in qs_gpe_type_abs :
-				tab_type_abs.append([gta, [(ta.get_pk(), ta) for ta in gta.get_type_abs_set().all()]])
+				tab_type_abs.append([
+					gta,
+					[(ta.get_pk(), ta) for ta in gta.get_type_abs_set().all()]
+				])
 
 			# Définition des types d'absence valides
 			self.fields['zl_type_abs'].choices += tab_type_abs
 
 			# Initialisation des choix valides de la liste déroulante des années
-			if est_super_secr == True :
+			if est_super_secr:
 				tab_annee = [(a.get_pk(), a) for a in TAnnee.objects.all()]
 			else :
 				tab_annee = []
@@ -189,9 +202,17 @@ class GererAbsence(forms.ModelForm) :
 		obj_annee = TAnnee.objects.get(pk = val_annee) if val_annee else None
 		obj_util = TUtilisateur.objects.get(pk = val_util) if val_util else None
 
-		# L'agent est-il secrétaire (et super-secrétaire) ?
-		est_secr = True if 'S' in self.kw_util.get_type_util__list() else False
-		est_super_secr = True if est_secr == True and self.kw_util.get_est_super_secr() == True else False
+		# L'agent est-il secrétaire ?
+		if 'S' in self.kw_util.get_type_util__list():
+			est_secr = True
+		else:
+			est_secr = False
+
+		# L'agent est-il super-secrétaire ?
+		if est_secr and self.kw_util.get_est_super_secr():
+			est_super_secr = True
+		else:
+			est_super_secr = False
 
 		if obj_util :
 
@@ -205,105 +226,105 @@ class GererAbsence(forms.ModelForm) :
 				# Stockage de l'année courante
 				annee = date.today().year
 
-				# A voir avec Coralie...
-				'''
-				if val_dt_abs :
-					if est_super_secr == False and val_dt_abs < date.today() and \
-					not date(annee, 1, 1) <= val_dt_abs <= date(annee, 1, 15) :
-						code_erreur_dt = 'COHERENCE_TEMPORELLE;zd_dt_abs'
-					elif val_dt_abs < obj_statut_util.get_dt_deb_statut_util() :
-						code_erreur_dt = 'ARRIVEE_AU_SMMAR;zd_dt_abs'
-				if val_dt_deb_abs and val_dt_fin_abs :
-					if est_super_secr == False and val_dt_deb_abs < date.today() and \
-					not date(annee, 1, 1) <= val_dt_deb_abs <= date(annee, 1, 15) :
-						code_erreur_dt = 'COHERENCE_TEMPORELLE;__all__'
-					else :
-						if val_dt_deb_abs >= val_dt_fin_abs :
-							code_erreur_dt = 'ORDRE_DES_DATES;__all__'
-						else :
-							if val_dt_deb_abs < obj_statut_util.get_dt_deb_statut_util() :
-								code_erreur_dt = 'ARRIVEE_AU_SMMAR;__all__'
-				'''
-
 				if val_dt_abs:
-					if est_super_secr == False \
-					and val_dt_abs < date.today():
+					if (not est_super_secr) and (val_dt_abs < date.today()):
 						code_erreur_dt = 'COHERENCE_TEMPORELLE;zd_dt_abs'
 					if val_dt_abs < obj_statut_util.get_dt_deb_statut_util():
 						code_erreur_dt = 'ARRIVEE_AU_SMMAR;zd_dt_abs'
-				if val_dt_deb_abs and val_dt_fin_abs:
-					if est_super_secr == False \
-					and val_dt_deb_abs < date.today():
+				if (val_dt_deb_abs) and (val_dt_fin_abs):
+					if (not est_super_secr) and (val_dt_deb_abs < date.today()):
 						code_erreur_dt = 'COHERENCE_TEMPORELLE;__all__'
 					else:
 						if val_dt_deb_abs >= val_dt_fin_abs:
 							code_erreur_dt = 'ORDRE_DES_DATES;__all__'
 						else:
-							if val_dt_deb_abs < obj_statut_util.get_dt_deb_statut_util() :
+							if val_dt_deb_abs < obj_statut_util.get_dt_deb_statut_util():
 								code_erreur_dt = 'ARRIVEE_AU_SMMAR;__all__'
 
 			else:
 				code_erreur_dt = 'PAS_DE_STATUT;__all__'
 
 			# Renvoi d'une erreur si un code d'erreur est défini pour le/les champ(s) "date"
-			if code_erreur_dt :
+			if code_erreur_dt:
+
 				split = code_erreur_dt.split(';')
-				if split[0] == 'ARRIVEE_AU_SMMAR' :
+				if split[0] == 'ARRIVEE_AU_SMMAR':
 					self.add_error(
 						split[1],
 						'''
 						L'agent {} est arrivé au SMMAR le {}.
-						'''.format(obj_util.get_nom_complet(), obj_statut_util.get_dt_deb_statut_util__str())
+						'''.format(
+							obj_util.get_nom_complet(),
+							obj_statut_util.get_dt_deb_statut_util__str()
+						)
 					)
-				elif split[0] == 'ORDRE_DES_DATES' :
+				elif split[0] == 'ORDRE_DES_DATES':
 					self.add_error(
 						split[1],
 						'''
 						Veuillez ordonner correctement la date de début de l'absence et la date de fin de l'absence.
 						'''
 					)
-				elif split[0] == 'PAS_DE_STATUT' :
+				elif split[0] == 'PAS_DE_STATUT':
 					self.add_error(
 						split[1],
-						'Aucun statut agent n\'a été déclaré pour l\'agent {}.'.format(obj_util.get_nom_complet())
+						'''
+						Aucun statut agent n'a été déclaré pour l'agent {}.
+						'''.format(obj_util.get_nom_complet())
 					)
 				elif split[0] == 'COHERENCE_TEMPORELLE' :
-					self.add_error(split[1], 'Veuillez respecter une cohérence temporelle.')
+					self.add_error(
+						split[1],
+						'Veuillez respecter une cohérence temporelle.'
+					)
 			else :
 
 				# Initialisation de la/des date(s) de l'absence
-				if val_dt_abs and val_indisp_dt_abs :
-					tab = { 'dt_abs' : [val_dt_abs], 'indisp_abs' : [val_indisp_dt_abs] }
-				elif val_dt_deb_abs and val_dt_fin_abs and val_indisp_dt_deb_abs and val_indisp_dt_fin_abs :
+				if (val_dt_abs) and (val_indisp_dt_abs):
 					tab = {
-						'dt_abs' : [val_dt_deb_abs, val_dt_fin_abs],
-						'indisp_abs' : [val_indisp_dt_deb_abs, val_indisp_dt_fin_abs]
+						'dt_abs': [val_dt_abs],
+						'indisp_abs': [val_indisp_dt_abs]
+					}
+				elif (val_dt_deb_abs) and (val_dt_fin_abs) and (val_indisp_dt_deb_abs) and (val_indisp_dt_fin_abs):
+					tab = {
+						'dt_abs': [val_dt_deb_abs, val_dt_fin_abs],
+						'indisp_abs': [val_indisp_dt_deb_abs, val_indisp_dt_fin_abs]
 					}
 				else :
 					tab = None
 
 				# Renvoi d'une erreur si aucun jour ouvrable trouvé
-				if tab and len([elem['dt_abs'] for elem in init_tranche_dt_abs(tab)]) == 0 :
-					self.add_error('__all__', 'L\'absence demandée est constituée uniquement de jours non-ouvrables.')
+				if (tab) and (len([elem['dt_abs'] for elem in init_tranche_dt_abs(tab)]) == 0):
+					self.add_error(
+						'__all__',
+						'L\'absence demandée est constituée uniquement de jours non-ouvrables.'
+					)
 
-				if tab and obj_gpe_type_abs and obj_annee :
+				if (tab) and (obj_gpe_type_abs) and (obj_annee):
 
 					# Initialisation des bornes selon le groupe de type d'absence
 					if obj_gpe_type_abs.get_pk() == settings.DB_PK_DATAS['C_PK'] :
 						tab_bornes_dt_abs = [
-							obj_annee.get_plage_conges_annee(), obj_annee.get_plage_conges_annee__str()
+							obj_annee.get_plage_conges_annee(),
+							obj_annee.get_plage_conges_annee__str()
 						]
 					else :
-						tab_bornes_dt_abs = [obj_annee.get_plage_rtt_annee(), obj_annee.get_plage_rtt_annee__str()]
+						tab_bornes_dt_abs = [
+							obj_annee.get_plage_rtt_annee(),
+							obj_annee.get_plage_rtt_annee__str()
+						]
 
 					# Renvoi d'une erreur si l'absence demandée n'est pas incluse dans sa tranche de validité
 					erreur = False
-					for elem in tab['dt_abs'] :
-						if not tab_bornes_dt_abs[0][0] <= elem <= tab_bornes_dt_abs[0][1] : erreur = True
-					if erreur == True :
+					for elem in tab['dt_abs']:
+						if not tab_bornes_dt_abs[0][0] <= elem <= tab_bornes_dt_abs[0][1]:
+							erreur = True
+					if erreur:
 						self.add_error(
 							'__all__',
-							'L\'absence doit avoir lieu entre le {0} et le {1}.'.format(*tab_bornes_dt_abs[1])
+							'''
+							L'absence doit avoir lieu entre le {0} et le {1}.
+							'''.format(*tab_bornes_dt_abs[1])
 						)
 
 				if tab :
@@ -342,7 +363,7 @@ class GererAbsence(forms.ModelForm) :
 					# Renvoi d'une erreur si une absence est déjà autorisée pendant la période d'absence demandée
 					if message : self.add_error('__all__', message)
 
-				if tab and est_secr == False and obj_gpe_type_abs and obj_annee :
+				if (tab) and (not est_super_secr) and (obj_gpe_type_abs) and (obj_annee):
 
 					# Récupération de la limite de journées paramétrée et
 					# valide pour le type d'absence sélectionné
@@ -576,18 +597,22 @@ class GererAbsence(forms.ModelForm) :
 		obj_type_abs = TTypeAbsence.objects.get(pk = val_type_abs)
 
 		# Initialisation de la valeur des attributs dt_abs et indisp_abs
-		if val_dt_abs and val_indisp_dt_abs :
-			tab = { 'dt_abs' : [val_dt_abs], 'indisp_abs' : [val_indisp_dt_abs] }
+		if (val_dt_abs) and (val_indisp_dt_abs):
+			tab = {
+				'dt_abs': [val_dt_abs],
+				'indisp_abs': [val_indisp_dt_abs]
+			}
 		else :
 			tab = {
-				'dt_abs' : [val_dt_deb_abs, val_dt_fin_abs],
-				'indisp_abs' : [val_indisp_dt_deb_abs, val_indisp_dt_fin_abs]
+				'dt_abs': [val_dt_deb_abs, val_dt_fin_abs],
+				'indisp_abs': [val_indisp_dt_deb_abs, val_indisp_dt_fin_abs]
 			}
 
 		# L'agent est-il super-secrétaire ?
 		est_super_secr = False
-		if 'S' in self.kw_util.get_type_util__list() and self.kw_util.get_est_super_secr() == True :
-			est_super_secr = True
+		if 'S' in self.kw_util.get_type_util__list():
+			if self.kw_util.get_est_super_secr():
+				est_super_secr = True
 
 		# Création/modification d'une instance TAbsence
 		obj = super(GererAbsence, self).save(commit = False)
@@ -605,6 +630,32 @@ class GererAbsence(forms.ModelForm) :
 		obj.get_dt_abs_set().all().delete()
 		for elem in init_tranche_dt_abs(tab) :
 			TDatesAbsence.objects.create(dt_abs = elem['dt_abs'], indisp_dt_abs = elem['indisp_dt_abs'], id_abs = obj)
+
+		# Si l'absence doit-être vérifiée automatiquement, alors...
+		if obj.id_type_abs.id_gpe_type_abs.est_autoverif:
+
+			# Paramètre d'automatisation activé !
+			self.kw_is_automated = True
+
+			# Définition des paramètres POST de vérification
+			# automatique
+			verif_post = {
+				'est_autor': True,
+				'comm_verif_abs': 'Absence acceptée automatiquement'
+			}
+
+			# Soumission du formulaire de vérification automatique
+			verif_form = VerifierAbsence(verif_post, kw_abs=obj)
+
+			# Si le formulaire est valide, alors...
+			if verif_form.is_valid():
+				# Si la vérification de l'absence n'est pas déjà
+				# existante, alors génération automatique d'une
+				# instance TVerificationAbsence
+				if not TVerificationAbsence.objects \
+				.filter(id_abs_mere=obj) \
+				.exists():
+					verif_form.save()
 
 		# Envoi d'un message s'il ne s'agit pas d'une absence générée
 		# automatiquement (temps partiels notamment)
