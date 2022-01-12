@@ -442,7 +442,7 @@ class GererAbsence(forms.ModelForm) :
 										'__all__',
 										'''
 										Quota mensuel non respecté (type
-										d'absence : {} / limite : {})
+										d'absence : {} / limite : {}).
 										'''.format(obj_type_abs, v1)
 									)
 
@@ -536,9 +536,50 @@ class GererAbsence(forms.ModelForm) :
 										'__all__',
 										'''
 										Quota hebdomadaire non respecté (type
-										d'absence : {} / limite : {})
+										d'absence : {} / limite : {}).
 										'''.format(obj_type_abs, v1)
 									)
+
+							# Stockage des jours de la semaine US
+							usweekdays = [
+								'MONDAY',
+								'TUESDAY',
+								'WEDNESDAY',
+								'THURSDAY',
+								'FRIDAY'
+							]
+							# Stockage des jours de la semaine FR
+							frweekdays = [
+								'LUNDI',
+								'MARDI',
+								'MERCREDI',
+								'JEUDI',
+								'VENDREDI'
+							]
+							# Pour chaque jour de la semaine US...
+							for i in usweekdays:
+								# Si interdiction d'absence, alors...
+								if (k1 == 'ALLOW_' + i) and (not v1):
+									# Pour chaque date...
+									for j in tab_dt_abs:
+										# Stockage de l'index US pour
+										# comparaison
+										usndx = usweekdays.index(i)
+										# Si similitude entre jour de
+										# la semaine et index US, alors
+										# renvoi d'une erreur
+										if j[0].weekday() == usndx:
+											self.add_error(
+												'__all__',
+												'''
+												Interdiction d'absence
+												le {} (type d'absence :
+												{}).
+												'''.format(
+													frweekdays[usndx].lower(),
+													obj_type_abs
+												)
+											)
 
 				if tab and obj_gpe_type_abs :
 					if obj_gpe_type_abs.get_pk() == settings.DB_PK_DATAS['CET_PK'] :

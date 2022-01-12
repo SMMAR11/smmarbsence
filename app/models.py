@@ -1492,6 +1492,11 @@ class TAbsenceRecurrenteAbr(models.Model):
 		on_delete=models.CASCADE,
 		verbose_name='Agent'
 	)
+	abr_recurrence = models.IntegerField(
+		default=1,
+		help_text='Soit X la valeur. L\'absence se produira toutes les X semaines.',
+		verbose_name='Récurrence de l\'absence (en semaines)'
+	)
 	
 	class Meta:
 		db_table = 't_absence_recurrente_abr'

@@ -200,6 +200,7 @@ class AbsenceRecurrenteAbr(admin.ModelAdmin):
 		'uti_id',
 		'tab_id',
 		'abr_jour',
+		'abr_recurrence',
 		'abr_duree',
 		'abr_date_dbt',
 		'abr_date_fn'
@@ -209,6 +210,7 @@ class AbsenceRecurrenteAbr(admin.ModelAdmin):
 		'uti_id',
 		'tab_id',
 		'abr_jour',
+		'abr_recurrence',
 		'abr_duree',
 		'abr_date_dbt',
 		'abr_date_fn'
@@ -241,7 +243,10 @@ class AbsenceRecurrenteAbr(admin.ModelAdmin):
 
 		# Pour chaque date...
 		for date in self.get_all_dates(
-			abr.abr_date_dbt, abr.abr_date_fn, abr.abr_jour
+			abr.abr_date_dbt,
+			abr.abr_date_fn,
+			abr.abr_jour,
+			abr.abr_recurrence
 		):
 
 			# Instance TAnnee
@@ -266,7 +271,7 @@ class AbsenceRecurrenteAbr(admin.ModelAdmin):
 
 		return True
 
-	def get_all_dates(self, begin, end, weekday):
+	def get_all_dates(self, begin, end, weekday, recurrence):
 
 		"""
 		Toutes les dates selon une plage de dates et un jour de la
@@ -284,7 +289,7 @@ class AbsenceRecurrenteAbr(admin.ModelAdmin):
 		# Récupération de toutes les dates
 		while date <= end:
 			yield date
-			date += timedelta(days=7)
+			date += timedelta(days=7*recurrence)
 
 	def insert_absences(self, abr):
 
@@ -298,7 +303,10 @@ class AbsenceRecurrenteAbr(admin.ModelAdmin):
 
 		# Pour chaque date...
 		for date in self.get_all_dates(
-			abr.abr_date_dbt, abr.abr_date_fn, abr.abr_jour
+			abr.abr_date_dbt,
+			abr.abr_date_fn,
+			abr.abr_jour,
+			abr.abr_recurrence
 		):
 
 			# Définition des paramètres POST
