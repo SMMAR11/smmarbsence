@@ -168,7 +168,7 @@ class Absence(admin.ModelAdmin) :
 	dt_abs__fr_str.allow_tags = True; dt_abs__fr_str.short_description = 'Date(s) d\'absence' 
 
 	def has_add_permission(self, _req) : return False
-	def has_delete_permission(self, _req, _obj = None) : return False
+	#def has_delete_permission(self, _req, _obj = None) : return False
 
 	actions = [set_src_alerte__on, set_src_alerte__off]
 	fields = ['src_alerte']

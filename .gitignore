@@ -3,6 +3,7 @@ __pycache__/
 
 .env
 
+app/migrations/*
+!app/migrations/__init__.py
 mail_dumps/
 media/
-app/migrations/

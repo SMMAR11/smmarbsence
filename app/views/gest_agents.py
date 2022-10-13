@@ -43,7 +43,7 @@ def ger_agent(_req, _inst = False) :
 	from app.functions import init_fm
 	from app.functions import init_form
 	from app.models import TUtilisateur
-	from django.core.urlresolvers import reverse
+	from django.urls import reverse
 	from django.http import Http404
 	from django.http import HttpResponse
 	from django.shortcuts import get_object_or_404
@@ -112,7 +112,7 @@ def ger_agent(_req, _inst = False) :
 		tab_params = None
 		if 'action' in _req.GET :
 			if _req.GET['action'] == 'modifier-mot-de-passe' :
-				obj_util_auth = TUtilisateur.objects.get(pk = _req.user.pk) if _req.user.is_authenticated() else None
+				obj_util_auth = TUtilisateur.objects.get(pk = _req.user.pk) if _req.user.is_authenticated else None
 				tab_params = [
 					pref_modif_mdp_agent,
 					True,
@@ -229,7 +229,7 @@ def consult_agent(_req, _a) :
 	from app.models import TTransactionsCetUtilisateur
 	from app.models import TUtilisateur
 	from datetime import date
-	from django.core.urlresolvers import reverse
+	from django.urls import reverse
 	from django.http import HttpResponse
 	from django.shortcuts import get_object_or_404
 	from django.shortcuts import render

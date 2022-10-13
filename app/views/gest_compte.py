@@ -152,7 +152,7 @@ def modif_compte(_req) :
 	from app.functions import init_fm
 	from app.functions import init_form
 	from app.models import TUtilisateur
-	from django.core.urlresolvers import reverse
+	from django.urls import reverse
 	from django.http import HttpResponse
 	from django.shortcuts import render
 	import json

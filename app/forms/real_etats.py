@@ -87,7 +87,7 @@ class FiltrerAbsences(forms.Form) :
 		from app.models import TAbsence
 		from app.models import TTypeAbsence
 		from app.models import TUtilisateur
-		from django.core.urlresolvers import reverse
+		from django.urls import reverse
 		import datetime
 
 		# Initialisation des données de la datatable

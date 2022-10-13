@@ -533,7 +533,7 @@ class FiltrerAgents(forms.Form) :
 		# Imports
 		from app.functions import transform_bool
 		from app.models import TUtilisateur
-		from django.core.urlresolvers import reverse
+		from django.urls import reverse
 
 		# Stockage des données du formulaire
 		val_type_util = self.fields['zl_type_util'].initial if _req.method == 'GET' else _req.POST.get('zl_type_util')

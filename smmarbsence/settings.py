@@ -171,3 +171,7 @@ DB_PK_DATAS = {
 SMMAR_YEAR_CREATION = 2003
 
 CAN_SEND_EMAILS = config('CAN_SEND_EMAILS', cast = bool)
+
+# Upgrade Python 3.8/Django 3.2
+
+DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'

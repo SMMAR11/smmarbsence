@@ -44,7 +44,7 @@ def ger_abs(_req) :
 	from app.functions import init_form
 	from app.models import TAbsence
 	from app.models import TUtilisateur
-	from django.core.urlresolvers import reverse
+	from django.urls import reverse
 	from django.http import HttpResponse
 	from django.shortcuts import render
 	import json
@@ -173,7 +173,7 @@ def consult_abs(_req, _a) :
 	from app.functions import transform_bool
 	from app.models import TAbsence
 	from app.models import TUtilisateur
-	from django.core.urlresolvers import reverse
+	from django.urls import reverse
 	from django.http import HttpResponse
 	from django.shortcuts import get_object_or_404
 	from django.shortcuts import render
@@ -489,7 +489,7 @@ def verif_abs(_req, _a) :
 	from app.models import TUtilisateur
 	from django.conf import settings
 	from django.core.exceptions import PermissionDenied
-	from django.core.urlresolvers import reverse
+	from django.urls import reverse
 	from django.http import HttpResponse
 	from django.shortcuts import get_object_or_404
 	from django.shortcuts import render

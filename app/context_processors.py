@@ -11,7 +11,7 @@ def get_alert(_req) :
 	from app.models import TUtilisateur
 	from datetime import date
 	from django.conf import settings
-	from django.core.urlresolvers import reverse
+	from django.urls import reverse
 	from num2words import num2words
 
 	tab_alert = []
@@ -24,7 +24,7 @@ def get_alert(_req) :
 	}
 
 	# Tentative d'obtention d'une instance TUtilisateur
-	obj_util = TUtilisateur.objects.get(pk = _req.user.pk) if _req.user.is_authenticated() else None
+	obj_util = TUtilisateur.objects.get(pk = _req.user.pk) if _req.user.is_authenticated else None
 
 	if obj_util :
 		if 'S' in obj_util.get_type_util__list() :
@@ -233,7 +233,7 @@ def get_donn(_req) :
 	from app.models import TUtilisateur
 
 	# Tentative d'obtention d'une instance TUtilisateur
-	obj_util = TUtilisateur.objects.get(pk = _req.user.pk) if _req.user.is_authenticated() else None
+	obj_util = TUtilisateur.objects.get(pk = _req.user.pk) if _req.user.is_authenticated else None
 
 	# Comptage du nombre de messages non-lus provenant de la boîte de réception
 	if obj_util :
@@ -261,12 +261,12 @@ def get_mess(_req) :
 
 	# Imports
 	from app.models import TUtilisateur
-	from django.core.urlresolvers import reverse
+	from django.urls import reverse
 	from django.template.defaultfilters import safe
 
 	ddown = None
 
-	if _req.user.is_authenticated() :
+	if _req.user.is_authenticated :
 
 		# Obtention d'une instance TUtilisateur
 		obj_util = TUtilisateur.objects.get(pk = _req.user.pk)
@@ -342,7 +342,7 @@ def init_fm_perm(_req) :
 	from django.template.defaultfilters import safe
 
 	# Initialisation des fenêtres modales
-	if _req.user.is_authenticated() :
+	if _req.user.is_authenticated :
 
 		# Obtention d'une instance TUtilisateur
 		obj_util = TUtilisateur.objects.get(pk = _req.user.pk)

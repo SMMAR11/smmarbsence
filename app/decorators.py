@@ -16,7 +16,7 @@ def verif_acces(_mod = None, _elem = None) :
 			# Jaugeage de l'éventualité d'une erreur 403
 			tab = get_menu(_req)
 			erreur_403 = False
-			if not _req.user.is_authenticated() :
+			if not _req.user.is_authenticated :
 				erreur_403 = True
 			else :
 				if _mod :

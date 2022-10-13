@@ -18,7 +18,7 @@ def index(_req) :
 	from django.contrib.auth import authenticate
 	from django.contrib.auth import login
 	from django.contrib.auth import logout
-	from django.core.urlresolvers import reverse
+	from django.urls import reverse
 	from django.http import HttpResponse
 	from django.shortcuts import render
 	import json
@@ -29,7 +29,7 @@ def index(_req) :
 	pref_auth = 'Authentifier'
 
 	# Tentative d'obtention d'une instance TUtilisateur
-	obj_util = TUtilisateur.objects.get(pk = _req.user.pk) if _req.user.is_authenticated() else None
+	obj_util = TUtilisateur.objects.get(pk = _req.user.pk) if _req.user.is_authenticated else None
 
 	if _req.method == 'GET' :
 		if 'action' in _req.GET :
@@ -102,7 +102,7 @@ def index(_req) :
 			], 3)
 
 			# Initialisation des fenêtres modales
-			if _req.user.is_authenticated() :
+			if _req.user.is_authenticated :
 				tab_fm = []
 			else :
 				tab_fm = [init_fm('login', 'Connexion à la plateforme {}'.format(AppConfig.verbose_name))]
@@ -112,7 +112,7 @@ def index(_req) :
 				'form_auth' : init_form(form_auth),
 				'menu' : menu,
 				'tab_fm' : tab_fm,
-				'title' : 'Accueil' if _req.user.is_authenticated() else 'Identification'
+				'title' : 'Accueil' if _req.user.is_authenticated else 'Identification'
 			})
 
 	else :

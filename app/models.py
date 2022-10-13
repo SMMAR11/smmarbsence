@@ -740,7 +740,7 @@ class TUtilisateur(User) :
 
 		# Imports
 		from app.models import TAbsence
-		from django.core.urlresolvers import reverse
+		from django.urls import reverse
 
 		# Initialisation du jeu de données des absences
 		qs_abs = self.get_abs_set().filter(num_annee = _annee) if _annee else TAbsence.objects.none()

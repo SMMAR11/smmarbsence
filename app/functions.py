@@ -197,7 +197,7 @@ def get_menu(_req) :
 	from app.models import TUtilisateur
 	from collections import OrderedDict
 	from django.conf import settings
-	from django.core.urlresolvers import reverse
+	from django.urls import reverse
 
 	menu = {
 		'cal_abs' : {
@@ -304,7 +304,7 @@ def get_menu(_req) :
 
 	# Initialisation du menu utilisateur
 	tab_menu_util = {}
-	if _req.user.is_authenticated() :
+	if _req.user.is_authenticated :
 
 		# Obtention d'une instance TUtilisateur
 		obj_util = TUtilisateur.objects.get(pk = _req.user)
@@ -612,7 +612,7 @@ def init_form(_form) :
 
 		# Mise en forme d'une zone de liste
 		if balise_init == 'select' :
-			if 'multiple="multiple"' in champ_html :
+			if 'multiple="multiple"' in champ_html or 'multiple' in champ_html :
 				if 'm2m="on"' in champ_html :
 
 					# Initialisation des colonnes de la balise <thead/>
@@ -845,16 +845,16 @@ def set_handler(_req, _sc, _mess) :
 
 	# Imports
 	from app.apps import AppConfig
-	from django.shortcuts import render_to_response
-	from django.template import RequestContext
+	from django.shortcuts import render
 
-	output = render_to_response(
+	output = render(
+		_req,
 		'./handlers/template.html', 
-		RequestContext(_req, { 
+		{ 
 			'app_name' : AppConfig.verbose_name,
 			'message' : _mess, 
 			'title' : 'Erreur {}'.format(_sc)
-		})
+		}
 	)
 	output.status_code = _sc
 

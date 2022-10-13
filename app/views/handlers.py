@@ -4,7 +4,7 @@
 Affichage du template d'erreur 403
 _req : Objet "requête"
 '''
-def handler_403(_req) :
+def handler_403(_req, exception) :
 
 	# Import
 	from app.functions import set_handler
@@ -15,7 +15,7 @@ def handler_403(_req) :
 Affichage du template d'erreur 404
 _req : Objet "requête"
 '''
-def handler_404(_req) :
+def handler_404(_req, exception) :
 
 	# Import
 	from app.functions import set_handler

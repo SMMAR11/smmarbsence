@@ -620,7 +620,7 @@ class GererAbsence(forms.ModelForm) :
 		from app.models import TTypeUtilisateur
 		from app.models import TUtilisateur
 		from app.models import TVerificationAbsence
-		from django.core.urlresolvers import reverse
+		from django.urls import reverse
 
 		# Stockage des données du formulaire
 		cleaned_data = self.cleaned_data
@@ -817,7 +817,7 @@ class FiltrerAbsences(forms.Form) :
 
 		# Imports
 		from app.models import TAbsence
-		from django.core.urlresolvers import reverse
+		from django.urls import reverse
 
 		# Stockage des données du formulaire
 		if _req.method == 'GET' :
@@ -894,7 +894,7 @@ class FiltrerVerificationAbsences(forms.Form) :
 
 		# Imports
 		from app.models import TUtilisateur
-		from django.core.urlresolvers import reverse
+		from django.urls import reverse
 
 		# Stockage des données du formulaire
 		val_util = self.fields['zl_util'].initial if _req.method == 'GET' else _req.POST.get('zl_util')
@@ -1027,7 +1027,7 @@ class VerifierAbsence(forms.ModelForm) :
 		# Imports
 		from app.functions import envoy_mess
 		from app.functions import get_tz
-		from django.core.urlresolvers import reverse
+		from django.urls import reverse
 
 		# Création/modification d'une instance TVerificationAbsence
 		obj = super(VerifierAbsence, self).save(commit = False)

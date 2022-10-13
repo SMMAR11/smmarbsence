@@ -12,7 +12,7 @@ class SelectionnerMessages(forms.Form) :
 
 		# Imports
 		from app.functions import init_mess_err
-		from django.core.urlresolvers import reverse
+		from django.urls import reverse
 
 		# Initialisation des arguments
 		kw_util = kwargs.pop('kw_util', None)
